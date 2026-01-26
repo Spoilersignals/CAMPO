@@ -1,0 +1,692 @@
+
+C:\Users\pesak\Desktop\campus>pnpm dev
+
+> confessuni@0.1.0 dev C:\Users\pesak\Desktop\campus
+> next dev
+
+  ▲ Next.js 14.2.21
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 5.1s
+ ○ Compiling /confessions ...
+ ✓ Compiled /confessions in 9.8s (1155 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ✓ Compiled in 1062ms (364 modules)
+ GET /confessions 200 in 11115ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 6s (786 modules)
+ POST /confessions 200 in 7065ms
+ POST /confessions 200 in 32ms
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /api/auth/session 200 in 7886ms
+ GET /api/auth/session 200 in 33ms
+ ○ Compiling /chat ...
+ ✓ Compiled /chat in 1667ms (1448 modules)
+ POST /chat 200 in 158ms
+ POST /chat 200 in 59ms
+ POST /chat 200 in 43ms
+ POST /chat 200 in 39ms
+ POST /chat 200 in 41ms
+ POST /confessions 200 in 47ms
+ POST /confessions 200 in 54ms
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /confessions 200 in 219ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 771ms (1120 modules)
+ GET /favicon.ico 200 in 1449ms
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /api/auth/session 200 in 1830ms
+ POST /confessions 200 in 2018ms
+ GET /api/auth/session 200 in 108ms
+ POST /confessions 200 in 89ms
+ ○ Compiling /crushes ...
+ ✓ Compiled /crushes in 1148ms (1490 modules)
+ POST /crushes 200 in 64ms
+ POST /crushes 200 in 27ms
+ POST /confessions 200 in 49ms
+ POST /confessions 200 in 41ms
+ POST /confessions 200 in 76ms
+ POST /confessions 200 in 63ms
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /api/auth/session 200 in 110ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 955ms (1524 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /admin?_rsc=13g80 200 in 268ms
+ ○ Compiling /admin/confessions ...
+ ✓ Compiled /admin/confessions in 740ms (1506 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /admin/confessions?_rsc=1xlae 200 in 80ms
+ POST /admin/confessions 200 in 130ms
+ POST /admin/confessions 200 in 81ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 588ms (1520 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /dashboard?_rsc=1s28z 200 in 178ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1198ms (1523 modules)
+ GET /placeholder-1.jpg 404 in 1327ms
+ ○ Compiling /dashboard/listings ...
+ ✓ Compiled /dashboard/listings in 642ms (1237 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /dashboard/listings?_rsc=xwbaj 200 in 494ms
+ GET /placeholder-1.jpg 404 in 95ms
+ GET /admin?_rsc=1nrkd 200 in 59ms
+ ○ Compiling /admin/listings ...
+ ✓ Compiled /admin/listings in 1078ms (1530 modules)
+ ○ Compiling /admin/conversations ...
+ ✓ Compiled /admin/conversations in 861ms (1532 modules)
+ ○ Compiling /admin/lost-found ...
+ ✓ Compiled /admin/lost-found in 635ms (1536 modules)
+ ○ Compiling /admin/support ...
+ ✓ Compiled /admin/support in 1330ms (1545 modules)
+ ○ Compiling /admin/users ...
+ ✓ Compiled /admin/users in 1428ms (1552 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /api/auth/session 200 in 108ms
+ GET /api/auth/session 200 in 94ms
+ GET /api/auth/session 200 in 89ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 2.5s (1544 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /notifications?_rsc=1ra73 200 in 436ms
+ ✓ Compiled in 1389ms (1544 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /notifications?_rsc=12y27 200 in 353ms
+ GET /confessions?_rsc=196hi 200 in 98ms
+ ✓ Compiled in 930ms (1558 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /confessions?_rsc=196hi 200 in 167ms
+ GET /admin/confessions?_rsc=14hnz 200 in 176ms
+ POST /admin/confessions 200 in 116ms
+ GET /notifications?_rsc=1ra73 200 in 40ms
+ ✓ Compiled in 836ms (1558 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /notifications?_rsc=12y27 200 in 245ms
+ GET /confessions?_rsc=196hi 200 in 283ms
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ POST /notifications 200 in 217ms
+ GET /notifications?_rsc=12aak 200 in 68ms
+ ○ Compiling /chat ...
+ ✓ Compiled /chat in 563ms (1172 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /chat 200 in 916ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 784ms (1201 modules)
+ GET /favicon.ico 200 in 1665ms
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /api/auth/session 200 in 1627ms
+ POST /chat 200 in 1909ms
+ GET /api/auth/session 200 in 128ms
+ POST /chat 200 in 87ms
+ POST /chat 200 in 46ms
+ POST /chat 200 in 43ms
+ POST /chat 200 in 42ms
+ POST /chat 200 in 53ms
+ POST /chat 200 in 46ms
+ POST /chat 200 in 29ms
+ POST /chat 200 in 57ms
+ POST /confessions 200 in 53ms
+ POST /confessions 200 in 45ms
+ ○ Compiling /confessions/[id] ...
+ ✓ Compiled /confessions/[id] in 1983ms (1588 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /chat 200 in 261ms
+ GET /favicon.ico 200 in 43ms
+ GET /api/auth/session 200 in 208ms
+ POST /chat 200 in 229ms
+ GET /api/auth/session 200 in 36ms
+ POST /chat 200 in 61ms
+ POST /confessions 200 in 44ms
+ POST /confessions 200 in 27ms
+ ✓ Compiled in 2.5s (1518 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 769ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /api/auth/[...nextauth] in 1057ms (1158 modules)
+ ✓ Compiled (1160 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /api/auth/session 200 in 2537ms
+ GET /favicon.ico 200 in 2829ms
+ GET /api/auth/session 200 in 56ms
+ ✓ Compiled in 2s (1551 modules)
+ ✓ Compiled in 622ms (405 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 675ms
+ GET /confessions?_rsc=196hi 200 in 698ms
+ GET /notifications?_rsc=12aak 200 in 716ms
+ GET /favicon.ico 200 in 37ms
+ GET /api/auth/session 200 in 181ms
+ GET /api/auth/session 200 in 23ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 2.6s (1551 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i?_rsc=1a46s 200 in 2438ms
+ GET /confessions?_rsc=196hi 200 in 2410ms
+ GET /notifications?_rsc=12aak 200 in 2565ms
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 2477ms
+ GET /favicon.ico 200 in 175ms
+ GET /api/auth/session 200 in 202ms
+ GET /api/auth/session 200 in 25ms
+ GET /notifications?_rsc=12aak 200 in 108ms
+ GET /confessions?_rsc=196hi 200 in 176ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 1119ms (1565 modules)
+ ✓ Compiled in 1ms (1160 modules)
+ ✓ Compiled in 1ms (1160 modules)
+ ✓ Compiled in 0ms (1160 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 3647ms
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /notifications?_rsc=12aak 200 in 4430ms
+ GET /favicon.ico 200 in 146ms
+ GET /api/auth/session 200 in 256ms
+ GET /api/auth/session 200 in 29ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 1093ms (1565 modules)
+ ✓ Compiled in 0ms (1160 modules)
+ ✓ Compiled in 1ms (1160 modules)
+ ✓ Compiled in 0ms (1160 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 3494ms
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /notifications?_rsc=12aak 200 in 4732ms
+ GET /api/auth/session 200 in 108ms
+ GET /favicon.ico 200 in 204ms
+ GET /api/auth/session 200 in 39ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 2.6s (1565 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 2117ms
+ GET /notifications?_rsc=12aak 200 in 491ms
+ GET /favicon.ico 200 in 336ms
+ GET /api/auth/session 200 in 247ms
+ GET /api/auth/session 200 in 46ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 1271ms (1565 modules)
+ ✓ Compiled in 1ms (1160 modules)
+ ✓ Compiled in 0ms (1160 modules)
+ ✓ Compiled in 1ms (1160 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 3743ms
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ GET /notifications?_rsc=12aak 200 in 4038ms
+ GET /favicon.ico 200 in 61ms
+ GET /api/auth/session 200 in 140ms
+ GET /api/auth/session 200 in 58ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 2.4s (1565 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 2106ms
+ GET /notifications?_rsc=12aak 200 in 622ms
+ GET /favicon.ico 200 in 35ms
+ GET /api/auth/session 200 in 56ms
+ GET /api/auth/session 200 in 34ms
+ ✓ Compiled in 1946ms (1565 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 450ms
+ GET /notifications?_rsc=12aak 200 in 308ms
+ GET /favicon.ico 200 in 34ms
+ GET /api/auth/session 200 in 94ms
+ GET /api/auth/session 200 in 66ms
+ ✓ Compiled in 1656ms (1567 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /notifications?_rsc=12aak 200 in 357ms
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 369ms
+ GET /favicon.ico 200 in 32ms
+ GET /api/auth/session 200 in 54ms
+ GET /api/auth/session 200 in 182ms
+ ✓ Compiled in 567ms (406 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 272ms
+ GET /notifications?_rsc=12aak 200 in 291ms
+ GET /favicon.ico 200 in 37ms
+ GET /api/auth/session 200 in 134ms
+ GET /api/auth/session 200 in 39ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 3s (1553 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i?_rsc=1a46s 200 in 2924ms
+ GET /notifications?_rsc=12aak 200 in 2566ms
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 2576ms
+ GET /notifications?_rsc=12aak 200 in 83ms
+ GET /favicon.ico 200 in 52ms
+ GET /api/auth/session 200 in 119ms
+ GET /api/auth/session 200 in 35ms
+ ✓ Compiled in 489ms (406 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 376ms
+ GET /notifications?_rsc=12aak 200 in 379ms
+ GET /favicon.ico 200 in 36ms
+ GET /api/auth/session 200 in 55ms
+ GET /api/auth/session 200 in 70ms
+ ✓ Compiled in 627ms (406 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 266ms
+ GET /notifications?_rsc=12aak 200 in 247ms
+ GET /favicon.ico 200 in 27ms
+ GET /api/auth/session 200 in 64ms
+ GET /api/auth/session 200 in 65ms
+ ✓ Compiled in 643ms (406 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /notifications?_rsc=12aak 200 in 565ms
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 598ms
+ GET /favicon.ico 200 in 29ms
+ GET /api/auth/session 200 in 255ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 184ms
+ ○ Compiling /_not-found ...
+ ⨯ Error: Cannot find module './9468.js'
+Require stack:
+- C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js
+- C:\Users\pesak\Desktop\campus\.next\server\app\(main)\confessions\[id]\page.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\build\utils.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at __webpack_require__.f.require (C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:203:28)
+    at C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:116:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:167:22)
+    at C:\Users\pesak\Desktop\campus\.next\server\app\(main)\confessions\page.js:1:16237
+    at Object.<anonymous> (C:\Users\pesak\Desktop\campus\.next\server\app\(main)\confessions\page.js:1:16335)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at requirePage (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js:98:84
+    at async loadComponentsImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\next-server.js:709:36)
+    at async DevServer.findPageComponents (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:1897:24)
+    at async DevServer.renderToResponseImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:1949:32)
+    at async DevServer.pipeImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:921:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:817:17)
+    at async C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js:173:21)
+    at async handleRequest (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js:350:24)
+    at async requestHandlerImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js:374:13)
+    at async Server.requestListener (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\app\\(main)\\confessions\\[id]\\page.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ],
+  page: '/confessions'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /_error in 5.6s (1752 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: An unsupported type was passed to use(): [object Object]
+    at ConfessionPage (confessions/[id]/page.tsx:34:62)
+digest: "2867255088"
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i?_rsc=1a46s 200 in 2776ms
+ GET /_next/static/webpack/2da60c49bba62aa6.webpack.hot-update.json 404 in 7560ms
+ GET /_next/static/css/app/layout.css?v=1769452584642 404 in 144ms
+ GET /_next/static/chunks/app/(main)/confessions/%5Bid%5D/page.js 404 in 154ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 156ms
+ GET /_next/static/chunks/main-app.js?v=1769452584642 404 in 159ms
+ GET /_next/static/chunks/app/layout.js 404 in 190ms
+ GET /confessions?_rsc=196hi 200 in 693ms
+ ⨯ Failed to generate static paths for /confessions/[id]:
+Error: Cannot find module './vendor-chunks/next-auth@4.24.13_next@14.2_6fd88f0334c11a24868f47e7586afed3.js'
+Require stack:
+- C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js
+- C:\Users\pesak\Desktop\campus\.next\server\app\(main)\confessions\[id]\page.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\build\utils.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\app\\(main)\\confessions\\[id]\\page.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ]
+}
+ ⨯ Failed to generate static paths for /confessions/[id]:
+Error: Cannot find module './vendor-chunks/next-auth@4.24.13_next@14.2_6fd88f0334c11a24868f47e7586afed3.js'
+Require stack:
+- C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js
+- C:\Users\pesak\Desktop\campus\.next\server\app\(main)\confessions\[id]\page.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\build\utils.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\app\\(main)\\confessions\\[id]\\page.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ]
+}
+ GET /confessions/cmkvhv0x30000w7i0ptt6fm6i 200 in 6970ms
+ GET /_next/static/chunks/app/(main)/layout.js 404 in 148ms
+ GET /_next/static/css/app/layout.css?v=1769452585104 404 in 148ms
+ GET /confessions 200 in 728ms
+ GET /_next/static/chunks/main-app.js?v=1769452585104 404 in 254ms
+ GET /confessions?_rsc=hagmd 200 in 670ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 201ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1359ms (1781 modules)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+ ⨯ Error: Cannot find module './9468.js'
+Require stack:
+- C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js
+- C:\Users\pesak\Desktop\campus\.next\server\app\(main)\confessions\page.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\build\utils.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at __webpack_require__.f.require (C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:203:28)
+    at C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:116:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:167:22)
+    at C:\Users\pesak\Desktop\campus\.next\server\app\favicon.ico\route.js:12:15907
+    at Object.<anonymous> (C:\Users\pesak\Desktop\campus\.next\server\app\favicon.ico\route.js:12:15950)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at requirePage (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js:98:84
+    at async loadComponentsImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\next-server.js:709:36)
+    at async DevServer.findPageComponents (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:1897:24)
+    at async DevServer.renderToResponseImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:1949:32)
+    at async DevServer.pipeImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:921:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:817:17)
+    at async C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js:173:21)
+    at async handleRequest (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js:350:24)
+    at async requestHandlerImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js:374:13)
+    at async Server.requestListener (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\app\\(main)\\confessions\\page.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ],
+  page: '/favicon.ico'
+}
+ GET /favicon.ico 500 in 2704ms
+ GET /_next/static/chunks/app/(main)/confessions/page.js 404 in 2589ms
+ GET /_next/static/chunks/app/layout.js 404 in 2517ms
+ GET /_next/static/chunks/app/(main)/layout.js 404 in 2550ms
+ GET /confessions?_rsc=196hi 200 in 2907ms
+ GET /_next/static/css/app/layout.css?v=1769452587027 404 in 185ms
+ POST /confessions 200 in 155ms
+ POST /confessions 200 in 49ms
+ ⨯ Error: Cannot find module './9468.js'
+Require stack:
+- C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js
+- C:\Users\pesak\Desktop\campus\.next\server\app\(main)\confessions\page.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\build\utils.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\start-server.js
+    at Function.<anonymous> (node:internal/modules/cjs/loader:1401:15)
+    at C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at __webpack_require__.f.require (C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:203:28)
+    at C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:116:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\pesak\Desktop\campus\.next\server\webpack-runtime.js:167:22)
+    at C:\Users\pesak\Desktop\campus\.next\server\app\favicon.ico\route.js:12:15907
+    at Object.<anonymous> (C:\Users\pesak\Desktop\campus\.next\server\app\favicon.ico\route.js:12:15950)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at mod.require (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:135:16)
+    at requirePage (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js:98:84
+    at async loadComponentsImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\load-components.js:98:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\next-server.js:709:36)
+    at async DevServer.findPageComponents (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:1897:24)
+    at async DevServer.renderToResponseImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:1949:32)
+    at async DevServer.pipeImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:921:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\base-server.js:817:17)
+    at async C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js:173:21)
+    at async handleRequest (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js:350:24)
+    at async requestHandlerImpl (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\router-server.js:374:13)
+    at async Server.requestListener (C:\Users\pesak\Desktop\campus\node_modules\.pnpm\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\.next\\server\\app\\(main)\\confessions\\page.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\pesak\\Desktop\\campus\\node_modules\\.pnpm\\next@14.2.21_react-dom@18.3.1_react@18.3.1__react@18.3.1\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ],
+  page: '/favicon.ico'
+}
+ GET /favicon.ico 500 in 38ms
+ GET /confessions 200 in 179ms
+ GET /_next/static/css/app/layout.css?v=1769452590573 404 in 37ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 135ms
+ GET /_next/static/chunks/main-app.js?v=1769452590573 404 in 143ms
+ GET /_next/static/chunks/app/(main)/confessions/page.js 404 in 136ms
+ GET /_next/static/chunks/app/layout.js 404 in 133ms
+ GET /_next/static/chunks/app/(main)/layout.js 404 in 129ms
+ GET /confessions 200 in 152ms
+ GET /_next/static/css/app/layout.css?v=1769452600931 404 in 43ms
+ GET /_next/static/chunks/main-app.js?v=1769452600931 404 in 161ms
+ GET /_next/static/chunks/app/layout.js 404 in 150ms
+ GET /_next/static/chunks/app/(main)/confessions/page.js 404 in 159ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 158ms
+ GET /_next/static/chunks/app/(main)/layout.js 404 in 151ms

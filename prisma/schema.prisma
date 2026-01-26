@@ -1,0 +1,849 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ CONSTANTS ============
+// COMMISSION_RATE = 0.15 (15%) - defined in application code
+
+// ============ ENUMS (using String for SQLite compatibility) ============
+
+model User {
+  id              String    @id @default(cuid())
+  name            String?
+  email           String    @unique
+  emailVerified   DateTime?
+  password        String?
+  image           String?
+  phone           String?
+  phoneVerified   DateTime?
+  studentId       String?
+  schoolName      String?
+  role            String    @default("SELLER") // SELLER, ADMIN
+  sellerApproved  Boolean   @default(false) // Broker must approve sellers
+  isVerified      Boolean   @default(false)
+  confessionLink  String?   @unique // Personal link code for receiving confessions
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  accounts            Account[]
+  sessions            Session[]
+  listings            Listing[]
+  sales               Transaction[] @relation("SellerTransactions")
+  sentMessages        ChatMessage[]
+  chatThreadsAsSeller ChatThread[]  @relation("SellerThreads")
+  notifications       Notification[]
+  reviews             Review[]      @relation("ReviewsReceived")
+  reviewsGiven        Review[]      @relation("ReviewsGiven")
+  itemRequests        ItemRequest[]
+  lostFoundItems      LostFoundItem[]
+  reports             Report[]      @relation("ReportsFiled")
+  reportsAgainst      Report[]      @relation("ReportsAgainst")
+  disputes            Dispute[]
+  moderationLogs      ModerationLog[]
+  favorites           Favorite[]
+  commissionPayments  CommissionPayment[]
+  escrowTransactions  EscrowTransaction[]
+  rideShares          RideShare[]
+  studyGroups         StudyGroup[]
+  studyGroupMemberships StudyGroupMember[]
+  campusEvents        CampusEvent[]
+  eventInterests      EventInterest[]
+  receivedConfessions Confession[] @relation("ReceivedConfessions")
+  followers           Follow[]     @relation("Followers")
+  following           Follow[]     @relation("Following")
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  follower    User     @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User     @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============ MARKETPLACE ============
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  parentId    String?
+  parent      Category? @relation("SubCategories", fields: [parentId], references: [id])
+  children    Category[] @relation("SubCategories")
+  createdAt   DateTime  @default(now())
+  listings    Listing[]
+  itemRequests ItemRequest[]
+}
+
+// Categories to seed:
+// Clothes (parent): Men Wear, Women Wear, Shoes, Bags
+// Electronics (parent): TV, Speaker System, Fan, Microwave, Refrigerator, Cooker, Water Heater, Laptops, Phones
+
+model Listing {
+  id                   String   @id @default(cuid())
+  title                String
+  description          String?
+  price                Float
+  condition            String   // NEW, LIKE_NEW, GOOD, FAIR
+  usageDuration        String?  // Required when condition is not NEW (enforced in app logic)
+  deliveryMethod       String   // CAMPUS_MEET, HOSTEL_DELIVERY, PICKUP
+  pickupLocation       String?
+  status               String   @default("PENDING") // PENDING, ACTIVE, SOLD, ARCHIVED, REJECTED
+  isFeatured           Boolean  @default(false)
+  featuredUntil        DateTime?
+  views                Int      @default(0)
+  commissionPaid       Boolean  @default(false)
+  commissionPaymentId  String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  sellerId    String
+  seller      User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  photos              ListingPhoto[]
+  transactions        Transaction[]
+  chatThreads         ChatThread[]
+  reports             Report[]
+  favorites           Favorite[]
+  commissionPayment   CommissionPayment?
+  escrowTransactions  EscrowTransaction[]
+
+  @@index([status, createdAt])
+  @@index([categoryId, status])
+  @@index([sellerId])
+}
+
+model ListingPhoto {
+  id        String   @id @default(cuid())
+  url       String
+  sortOrder Int      @default(0)
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([listingId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+}
+
+// ============ COMMISSION & ESCROW ============
+
+model CommissionPayment {
+  id           String    @id @default(cuid())
+  amount       Float
+  status       String    @default("PENDING") // PENDING, PAID, REFUNDED, HALF_REFUNDED
+  listingId    String    @unique
+  listing      Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  sellerId     String
+  seller       User      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  paidAt       DateTime?
+  refundedAt   DateTime?
+  refundAmount Float?    // For tracking half refund when sale doesn't happen
+  createdAt    DateTime  @default(now())
+
+  @@index([sellerId])
+  @@index([status])
+}
+
+model EscrowTransaction {
+  id          String    @id @default(cuid())
+  amount      Float
+  status      String    @default("HOLDING") // HOLDING, RELEASED, REFUNDED, DISPUTED
+  listingId   String
+  listing     Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  buyerName   String
+  buyerPhone  String
+  buyerEmail  String?
+  sellerId    String
+  seller      User      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  releasedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([sellerId])
+  @@index([listingId])
+  @@index([status])
+}
+
+// ============ CHAT SYSTEM ============
+
+model ChatThread {
+  id               String   @id @default(cuid())
+  listingId        String?
+  listing          Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+  buyerId          String?  // Optional for guest buyers
+  buyerName        String?  // For guest buyers
+  buyerPhone       String?  // For guest buyers
+  buyerEmail       String?  // For guest buyers
+  sellerId         String
+  seller           User     @relation("SellerThreads", fields: [sellerId], references: [id], onDelete: Cascade)
+  isModerated      Boolean  @default(true) // Broker can see all
+  supportRequested Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  messages         ChatMessage[]
+  supportTickets   SupportTicket[]
+
+  @@unique([listingId, buyerId, sellerId])
+  @@index([buyerId])
+  @@index([sellerId])
+}
+
+model ChatMessage {
+  id        String    @id @default(cuid())
+  body      String
+  threadId  String
+  thread    ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  senderId  String?   // Optional for guest messages
+  sender    User?     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderName String?  // For guest buyers
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([threadId, createdAt])
+}
+
+// ============ TRANSACTIONS & REVIEWS ============
+
+model Transaction {
+  id          String    @id @default(cuid())
+  listingId   String
+  listing     Listing   @relation(fields: [listingId], references: [id])
+  buyerName   String    // Guest buyer name
+  buyerPhone  String    // Guest buyer phone
+  buyerEmail  String?   // Guest buyer email
+  sellerId    String
+  seller      User      @relation("SellerTransactions", fields: [sellerId], references: [id])
+  price       Float
+  status      String    @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  review      Review?
+  disputes    Dispute[]
+
+  @@index([sellerId])
+}
+
+model Review {
+  id            String      @id @default(cuid())
+  rating        Int         // 1-5
+  comment       String?
+  transactionId String      @unique
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  reviewerId    String?     // Optional - can be from guest
+  reviewer      User?       @relation("ReviewsGiven", fields: [reviewerId], references: [id])
+  reviewerName  String?     // For guest reviewers
+  revieweeId    String
+  reviewee      User        @relation("ReviewsReceived", fields: [revieweeId], references: [id])
+  createdAt     DateTime    @default(now())
+
+  @@index([revieweeId])
+}
+
+// ============ ITEM REQUESTS ("Looking For") ============
+
+model ItemRequest {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  budget      Float?
+  condition   String?  // Desired condition
+  status      String   @default("OPEN") // OPEN, FULFILLED, CLOSED
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  requesterId String?  // Optional for anonymous suggestions
+  requester   User?    @relation(fields: [requesterId], references: [id], onDelete: Cascade)
+  guestName   String?  // For anonymous users
+  guestEmail  String?  // For anonymous users
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reports     Report[]
+
+  @@index([status, createdAt])
+}
+
+// ============ LOST & FOUND ============
+
+model LostFoundItem {
+  id              String   @id @default(cuid())
+  type            String   // LOST, FOUND
+  title           String
+  description     String?
+  location        String?
+  locationDetails String?  // Detailed location where item was found/lost
+  contactPhone    String   // Phone number to contact
+  contactName     String?  // Name of person to contact (optional, uses reporter name if not provided)
+  occurredAt      DateTime?
+  status          String   @default("ACTIVE") // ACTIVE, RESOLVED - FREE feature, no admin review needed
+  reporterId      String
+  reporter        User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  photos      LostFoundPhoto[]
+  reports     Report[]
+
+  @@index([type, status])
+}
+
+model LostFoundPhoto {
+  id          String        @id @default(cuid())
+  url         String
+  sortOrder   Int           @default(0)
+  lostFoundId String
+  lostFound   LostFoundItem @relation(fields: [lostFoundId], references: [id], onDelete: Cascade)
+}
+
+// ============ NOTIFICATIONS ============
+
+model Notification {
+  id        String    @id @default(cuid())
+  type      String    // MESSAGE, LISTING_APPROVED, LISTING_SOLD, etc.
+  title     String
+  body      String?
+  href      String?
+  readAt    DateTime?
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, readAt])
+}
+
+// ============ SUPPORT TICKETS ============
+
+model SupportTicket {
+  id          String    @id @default(cuid())
+  threadId    String?
+  thread      ChatThread? @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  subject     String
+  description String
+  buyerName   String?   // For guest buyers
+  buyerPhone  String?   // For guest buyers
+  buyerEmail  String?   // For guest buyers
+  status      String    @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([threadId])
+}
+
+// ============ REPORTS & DISPUTES ============
+
+model Report {
+  id            String   @id @default(cuid())
+  targetType    String   // LISTING, REQUEST, LOST_FOUND, USER, MESSAGE
+  targetId      String
+  reason        String
+  details       String?
+  status        String   @default("PENDING") // PENDING, REVIEWED, RESOLVED
+  reporterId    String
+  reporter      User     @relation("ReportsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
+  againstUserId String?
+  againstUser   User?    @relation("ReportsAgainst", fields: [againstUserId], references: [id])
+  listingId     String?
+  listing       Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+  itemRequestId String?
+  itemRequest   ItemRequest? @relation(fields: [itemRequestId], references: [id], onDelete: SetNull)
+  lostFoundId   String?
+  lostFound     LostFoundItem? @relation(fields: [lostFoundId], references: [id], onDelete: SetNull)
+  handledAt     DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([status, createdAt])
+}
+
+model Dispute {
+  id            String      @id @default(cuid())
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  openedById    String
+  openedBy      User        @relation(fields: [openedById], references: [id])
+  summary       String
+  resolution    String?
+  status        String      @default("OPEN") // OPEN, RESOLVED, CLOSED
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([status])
+}
+
+model ModerationLog {
+  id         String   @id @default(cuid())
+  action     String   // APPROVE, REJECT, REMOVE, WARN, BAN
+  targetType String
+  targetId   String
+  notes      String?
+  adminId    String
+  admin      User     @relation(fields: [adminId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@index([targetType, targetId])
+}
+
+// ============ ANONYMOUS CONFESSIONS ============
+
+model Confession {
+  id               String    @id @default(cuid())
+  content          String
+  status           String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  confessionNumber Int?      // Auto-assigned number for approved confessions
+  shareCode        String?   @unique // Short shareable code for public links
+  rejectionReason  String?
+  recipientId      String?   // User who receives this confession (for personal links)
+  recipient        User?     @relation("ReceivedConfessions", fields: [recipientId], references: [id])
+  createdAt        DateTime  @default(now())
+  approvedAt       DateTime?
+  expiresAt        DateTime? // For story-style expiration (24h from approval)
+  
+  comments         ConfessionComment[]
+  reactions        ConfessionReaction[]
+  views            ConfessionView[]
+
+  @@index([status, createdAt])
+  @@index([confessionNumber])
+  @@index([expiresAt])
+  @@index([recipientId])
+}
+
+model ConfessionView {
+  id           String     @id @default(cuid())
+  sessionId    String     // Anonymous session ID for tracking unique views
+  confessionId String
+  confession   Confession @relation(fields: [confessionId], references: [id], onDelete: Cascade)
+  viewedAt     DateTime   @default(now())
+
+  @@unique([sessionId, confessionId])
+  @@index([confessionId])
+}
+
+model ConfessionComment {
+  id           String     @id @default(cuid())
+  content      String
+  authorName   String?    // Optional display name (anonymous if null)
+  confessionId String
+  confession   Confession @relation(fields: [confessionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@index([confessionId, createdAt])
+}
+
+model ConfessionReaction {
+  id           String     @id @default(cuid())
+  emoji        String     // 🔥😂😮😢😡❤️
+  sessionId    String     // Anonymous session ID for tracking unique reactions
+  confessionId String
+  confession   Confession @relation(fields: [confessionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([sessionId, confessionId, emoji])
+  @@index([confessionId])
+}
+
+// ============ PERSONAL CONFESSION LINKS (Anonymous) ============
+
+model PersonalLink {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique  // Browser session ID
+  code        String   @unique  // Short shareable code
+  displayName String?            // Optional display name
+  createdAt   DateTime @default(now())
+
+  confessions PersonalConfession[]
+}
+
+model PersonalConfession {
+  id              String       @id @default(cuid())
+  content         String
+  status          String       @default("RECEIVED") // RECEIVED
+  personalLinkId  String
+  personalLink    PersonalLink @relation(fields: [personalLinkId], references: [id], onDelete: Cascade)
+  sharedToStories Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+
+  @@index([personalLinkId, createdAt])
+}
+
+// ============ CAMPUS CRUSHES / MISSED CONNECTIONS ============
+
+model CampusCrush {
+  id          String    @id @default(cuid())
+  title       String    // "Blue hoodie guy at library"
+  description String    // Detailed description
+  location    String?   // Where they saw them
+  seenAt      DateTime? // When they saw them
+  status      String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  crushNumber Int?      // Auto-assigned number for approved crushes
+  createdAt   DateTime  @default(now())
+  approvedAt  DateTime?
+
+  comments    CrushComment[]
+  reactions   CrushReaction[]
+
+  @@index([status, createdAt])
+  @@index([crushNumber])
+}
+
+model CrushComment {
+  id        String      @id @default(cuid())
+  content   String
+  authorName String?    // Optional display name (anonymous if null)
+  crushId   String
+  crush     CampusCrush @relation(fields: [crushId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@index([crushId, createdAt])
+}
+
+model CrushReaction {
+  id        String      @id @default(cuid())
+  emoji     String      // 😍🔥💕👀🥺
+  sessionId String      // Anonymous session ID
+  crushId   String
+  crush     CampusCrush @relation(fields: [crushId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@unique([sessionId, crushId, emoji])
+  @@index([crushId])
+}
+
+// ============ SPOTTED (ANONYMOUS SIGHTINGS) ============
+
+model Spotted {
+  id          String    @id @default(cuid())
+  content     String    // What was spotted
+  location    String    // Where
+  spottedAt   DateTime? // When
+  status      String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  spottedNumber Int?    // Auto-assigned number
+  createdAt   DateTime  @default(now())
+  approvedAt  DateTime?
+
+  comments    SpottedComment[]
+  reactions   SpottedReaction[]
+
+  @@index([status, createdAt])
+  @@index([spottedNumber])
+}
+
+model SpottedComment {
+  id         String   @id @default(cuid())
+  content    String
+  authorName String?
+  spottedId  String
+  spotted    Spotted  @relation(fields: [spottedId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@index([spottedId, createdAt])
+}
+
+model SpottedReaction {
+  id        String   @id @default(cuid())
+  emoji     String
+  sessionId String
+  spottedId String
+  spotted   Spotted  @relation(fields: [spottedId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([sessionId, spottedId, emoji])
+  @@index([spottedId])
+}
+
+// ============ POLLS & HOT TAKES ============
+
+model Poll {
+  id          String    @id @default(cuid())
+  question    String
+  status      String    @default("PENDING") // PENDING, ACTIVE, CLOSED, REJECTED
+  pollNumber  Int?      // Auto-assigned number
+  endsAt      DateTime? // Optional poll end time
+  createdAt   DateTime  @default(now())
+  approvedAt  DateTime?
+
+  options     PollOption[]
+  comments    PollComment[]
+
+  @@index([status, createdAt])
+}
+
+model PollOption {
+  id        String   @id @default(cuid())
+  text      String
+  pollId    String
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes     PollVote[]
+  createdAt DateTime @default(now())
+
+  @@index([pollId])
+}
+
+model PollVote {
+  id        String     @id @default(cuid())
+  sessionId String     // Anonymous session ID
+  optionId  String
+  option    PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+
+  @@unique([sessionId, optionId])
+  @@index([optionId])
+}
+
+model PollComment {
+  id         String   @id @default(cuid())
+  content    String
+  authorName String?
+  pollId     String
+  poll       Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@index([pollId, createdAt])
+}
+
+// ============ COURSE & PROFESSOR REVIEWS ============
+
+model Course {
+  id          String   @id @default(cuid())
+  code        String   @unique // e.g., "CS101"
+  name        String
+  department  String?
+  createdAt   DateTime @default(now())
+
+  reviews     CourseReview[]
+
+  @@index([department])
+}
+
+model Professor {
+  id          String   @id @default(cuid())
+  name        String
+  department  String?
+  createdAt   DateTime @default(now())
+
+  reviews     CourseReview[]
+
+  @@index([department])
+  @@index([name])
+}
+
+model CourseReview {
+  id           String     @id @default(cuid())
+  rating       Int        // 1-5 stars
+  difficulty   Int?       // 1-5 (1=easy, 5=hard)
+  workload     Int?       // 1-5 (1=light, 5=heavy)
+  content      String?    // Review text
+  grade        String?    // Grade received (optional)
+  wouldTakeAgain Boolean?
+  tips         String?    // Tips for future students
+  semester     String?    // e.g., "Fall 2024"
+  isAnonymous  Boolean    @default(true)
+  authorName   String?    // Display name if not anonymous
+  sessionId    String     // For anonymous tracking
+  courseId     String
+  course       Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  professorId  String?
+  professor    Professor? @relation(fields: [professorId], references: [id], onDelete: SetNull)
+  createdAt    DateTime   @default(now())
+
+  @@index([courseId])
+  @@index([professorId])
+}
+
+// ============ RIDE SHARING ============
+
+model RideShare {
+  id              String    @id @default(cuid())
+  type            String    // OFFERING, LOOKING
+  origin          String    // From where
+  destination     String    // To where
+  departureDate   DateTime
+  departureTime   String?   // Flexible time description
+  seatsAvailable  Int?      // For OFFERING
+  seatsNeeded     Int?      // For LOOKING
+  pricePerSeat    Float?
+  description     String?
+  contactPhone    String
+  contactName     String?
+  status          String    @default("ACTIVE") // ACTIVE, FULL, CANCELLED, COMPLETED
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([type, status, departureDate])
+  @@index([userId])
+}
+
+// ============ STUDY GROUPS ============
+
+model StudyGroup {
+  id          String   @id @default(cuid())
+  courseCode  String   // Course code this group is for
+  courseName  String?
+  topic       String?  // Specific topic/exam to study
+  location    String?  // Where to meet
+  meetingTime DateTime?
+  maxMembers  Int?
+  description String?
+  contactInfo String   // How to join/contact
+  status      String   @default("OPEN") // OPEN, FULL, CLOSED
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members     StudyGroupMember[]
+
+  @@index([courseCode, status])
+  @@index([userId])
+}
+
+model StudyGroupMember {
+  id           String     @id @default(cuid())
+  studyGroupId String
+  studyGroup   StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt     DateTime   @default(now())
+
+  @@unique([studyGroupId, userId])
+}
+
+// ============ CAMPUS EVENTS ============
+
+model CampusEvent {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  location     String
+  startTime    DateTime
+  endTime      DateTime?
+  category     String    // PARTY, CLUB, ACADEMIC, SPORTS, CAREER, OTHER
+  imageUrl     String?
+  ticketPrice  Float?    // null = free
+  ticketLink   String?   // External ticket link
+  contactInfo  String?
+  status       String    @default("PENDING") // PENDING, APPROVED, REJECTED, CANCELLED
+  isFeatured   Boolean   @default(false)
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  interested   EventInterest[]
+
+  @@index([status, startTime])
+  @@index([category, status])
+  @@index([userId])
+}
+
+model EventInterest {
+  id        String      @id @default(cuid())
+  eventId   String
+  event     CampusEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+
+  @@unique([eventId, userId])
+}
+
+// ============ ANONYMOUS GROUP CHAT ============
+
+model GroupChatMessage {
+  id           String    @id @default(cuid())
+  content      String
+  authorName   String?   // Optional display name (anonymous if null)
+  sessionId    String    // For message ownership/deletion
+  anonymousId  String    @default("Anon#0000") // Unique anonymous identity per session (e.g., "Anon#1234")
+  replyToId    String?   // Optional reference to message being replied to
+  replyTo      GroupChatMessage?  @relation("Replies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies      GroupChatMessage[] @relation("Replies")
+  isDeleted    Boolean   @default(false)
+  deletedAt    DateTime?
+  deletedBy    String?   // "OWNER" or "ADMIN"
+  createdAt    DateTime  @default(now())
+
+  @@index([createdAt])
+  @@index([sessionId])
+}
+
+// Banned words for group chat (selling prevention)
+model BannedWord {
+  id        String   @id @default(cuid())
+  word      String   @unique
+  createdAt DateTime @default(now())
+}
+
+// ============ PUSH NOTIFICATIONS ============
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userId    String?
+  sessionId String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+}

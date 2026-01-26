@@ -1,0 +1,32 @@
+name: comradezone
+region: fra
+services:
+  - name: web
+    dockerfile_path: Dockerfile
+    github:
+      repo: YOUR_GITHUB_USERNAME/comradezone
+      branch: main
+      deploy_on_push: true
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    envs:
+      - key: DATABASE_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${db.DATABASE_URL}
+      - key: NEXTAUTH_SECRET
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: NEXTAUTH_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${APP_URL}
+
+databases:
+  - name: db
+    engine: PG
+    production: false
+    cluster_name: comradezone-db
+    db_name: comradezone
+    db_user: comradezone
