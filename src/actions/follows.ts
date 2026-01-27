@@ -109,6 +109,10 @@ export async function isFollowing(userId: string) {
   return !!follow;
 }
 
+export async function getFollowStatus(userId: string) {
+  return isFollowing(userId);
+}
+
 export async function getFollowCounts(userId: string) {
   const [followersCount, followingCount] = await Promise.all([
     prisma.follow.count({ where: { followingId: userId } }),

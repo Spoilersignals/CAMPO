@@ -64,7 +64,7 @@ export function ChatInput({
             disabled={disabled}
             rows={1}
             className={cn(
-              "w-full resize-none rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50",
+              "w-full resize-none rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50",
               isOverLimit && "border-red-500 focus:border-red-500 focus:ring-red-500/20"
             )}
           />

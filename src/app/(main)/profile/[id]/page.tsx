@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { BadgeCheck, Star, Calendar, Package, MessageCircle } from "lucide-react";
+import { BadgeCheck, Star, Calendar, Package, MessageCircle, Users } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ListingCard } from "@/components/listings/listing-card";
+import { FollowButton } from "@/components/follow-button";
+import { getFollowCounts, getFollowStatus, getFollowers, getFollowing } from "@/actions/follows";
 import type { Condition } from "@/lib/constants";
 
 async function getProfile(userId: string) {
@@ -96,6 +98,13 @@ export default async function ProfilePage({
   }
 
   const isOwnProfile = session?.user?.id === id;
+  
+  const [followCounts, isFollowing, followers, following] = await Promise.all([
+    getFollowCounts(id),
+    session?.user ? getFollowStatus(id) : Promise.resolve(false),
+    getFollowers(id),
+    getFollowing(id),
+  ]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -134,11 +143,16 @@ export default async function ProfilePage({
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               {profile.stats.rating.toFixed(1)} ({profile.stats.reviewCount} reviews)
             </span>
+            <span className="flex items-center gap-1">
+              <Users className="h-4 w-4" />
+              {followCounts.followersCount} followers · {followCounts.followingCount} following
+            </span>
           </div>
 
           {!isOwnProfile && session?.user && (
-            <div className="mt-4">
-              <Button>
+            <div className="mt-4 flex gap-2">
+              <FollowButton userId={id} initialIsFollowing={isFollowing} />
+              <Button variant="outline">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Contact Seller
               </Button>
@@ -185,6 +199,66 @@ export default async function ProfilePage({
             ))}
           </div>
         )}
+      </div>
+
+      <div className="mb-8 grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Followers ({followCounts.followersCount})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {followers.length === 0 ? (
+              <p className="text-gray-500">No followers yet</p>
+            ) : (
+              <div className="space-y-3">
+                {followers.slice(0, 5).map((user) => (
+                  <Link
+                    key={user.id}
+                    href={`/profile/${user.id}`}
+                    className="flex items-center gap-3 rounded-lg p-2 hover:bg-gray-50"
+                  >
+                    <Avatar src={user.image} fallback={user.name || "U"} size="sm" />
+                    <span className="font-medium text-gray-900">{user.name}</span>
+                  </Link>
+                ))}
+                {followers.length > 5 && (
+                  <p className="text-sm text-gray-500">
+                    +{followers.length - 5} more
+                  </p>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Following ({followCounts.followingCount})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {following.length === 0 ? (
+              <p className="text-gray-500">Not following anyone yet</p>
+            ) : (
+              <div className="space-y-3">
+                {following.slice(0, 5).map((user) => (
+                  <Link
+                    key={user.id}
+                    href={`/profile/${user.id}`}
+                    className="flex items-center gap-3 rounded-lg p-2 hover:bg-gray-50"
+                  >
+                    <Avatar src={user.image} fallback={user.name || "U"} size="sm" />
+                    <span className="font-medium text-gray-900">{user.name}</span>
+                  </Link>
+                ))}
+                {following.length > 5 && (
+                  <p className="text-sm text-gray-500">
+                    +{following.length - 5} more
+                  </p>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
