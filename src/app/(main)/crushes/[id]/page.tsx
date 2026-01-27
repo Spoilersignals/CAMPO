@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { TelegramReactions } from "@/components/reactions/telegram-reactions";
+import { CommentThread, Comment } from "@/components/comments/comment-thread";
 import {
   getCrushById,
   addCrushComment,
@@ -40,56 +38,50 @@ export default function CrushDetailPage() {
 
   const [crush, setCrush] = useState<Crush | null>(null);
   const [loading, setLoading] = useState(true);
-  const [commentContent, setCommentContent] = useState("");
-  const [authorName, setAuthorName] = useState("");
-  const [commentError, setCommentError] = useState("");
-  const [isPending, startTransition] = useTransition();
+  const [comments, setComments] = useState<Comment[]>([]);
   
   const [reactions, setReactions] = useState<Array<{ emoji: string; count: number }>>([]);
   const [userReactions, setUserReactions] = useState<string[]>([]);
 
-  useEffect(() => {
-    loadCrush();
-    loadReactions();
-  }, [id]);
-
-  async function loadCrush() {
+  const loadCrush = useCallback(async () => {
     setLoading(true);
     const result = await getCrushById(id);
     if (result.success && result.data) {
       setCrush(result.data);
+      setComments(
+        result.data.comments.map((c) => ({
+          id: c.id,
+          authorName: c.authorName || undefined,
+          content: c.content,
+          createdAt: c.createdAt,
+          reactions: [],
+          userReactions: [],
+        }))
+      );
     } else {
       router.push("/crushes");
     }
     setLoading(false);
-  }
+  }, [id, router]);
 
-  async function loadReactions() {
+  const loadReactions = useCallback(async () => {
     const result = await getCrushReactionsWithUser(id);
     if (result.success && result.data) {
       setReactions(result.data.reactions);
       setUserReactions(result.data.userReactions);
     }
-  }
+  }, [id]);
 
-  function handleCommentSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setCommentError("");
+  useEffect(() => {
+    loadCrush();
+    loadReactions();
+  }, [loadCrush, loadReactions]);
 
-    startTransition(async () => {
-      const result = await addCrushComment(
-        id,
-        commentContent,
-        authorName || undefined
-      );
-      if (result.success) {
-        setCommentContent("");
-        setAuthorName("");
-        loadCrush();
-      } else {
-        setCommentError(result.error || "Failed to add comment");
-      }
-    });
+  async function handleAddComment(content: string, authorName?: string) {
+    const result = await addCrushComment(id, content, authorName);
+    if (result.success) {
+      loadCrush();
+    }
   }
 
   async function handleReaction(emoji: string) {
@@ -162,63 +154,12 @@ export default function CrushDetailPage() {
       </Card>
 
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          💬 Comments ({crush.comments.length})
-        </h2>
-
-        <Card className="mb-4 border-pink-100">
-          <CardContent className="p-4">
-            <form onSubmit={handleCommentSubmit} className="space-y-3">
-              <Textarea
-                placeholder="Add a comment..."
-                value={commentContent}
-                onChange={(e) => setCommentContent(e.target.value)}
-                required
-                className="focus:border-pink-500 focus:ring-pink-500/20"
-              />
-              <Input
-                placeholder="Your name (optional, for anonymous leave blank)"
-                value={authorName}
-                onChange={(e) => setAuthorName(e.target.value)}
-                className="focus:border-pink-500 focus:ring-pink-500/20"
-              />
-              {commentError && (
-                <p className="text-sm text-red-600">{commentError}</p>
-              )}
-              <Button
-                type="submit"
-                disabled={isPending}
-                className="bg-pink-500 hover:bg-pink-600"
-              >
-                {isPending ? "Posting..." : "Post Comment"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {crush.comments.length === 0 ? (
-          <p className="text-center text-gray-500 py-4">
-            No comments yet. Be the first to comment!
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {crush.comments.map((comment) => (
-              <Card key={comment.id} className="border-gray-100">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-900">
-                      {comment.authorName || "Anonymous"}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {formatRelativeTime(comment.createdAt)}
-                    </span>
-                  </div>
-                  <p className="text-gray-700">{comment.content}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+        <CommentThread
+          contentType="crush"
+          contentId={id}
+          initialComments={comments}
+          onAddComment={handleAddComment}
+        />
       </div>
     </div>
   );

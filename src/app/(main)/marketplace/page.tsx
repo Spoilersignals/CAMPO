@@ -2,7 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { FLAT_CATEGORIES, CONDITIONS, ITEMS_PER_PAGE, SORT_OPTIONS } from "@/lib/constants";
 import { ListingGrid } from "@/components/listings";
-import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { ChevronLeft, ChevronRight, SlidersHorizontal, Sparkles } from "lucide-react";
 
 interface MarketplacePageProps {
   searchParams: Promise<{
@@ -145,20 +145,29 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Marketplace</h1>
-        <p className="mt-2 text-gray-600">
-          {total} {total === 1 ? "item" : "items"} available
-        </p>
+      <div className="mb-8 p-8 rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='0.4' fill-rule='evenodd'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/svg%3E\")"}} />
+        <div className="relative">
+          <div className="flex items-center gap-3 mb-2">
+            <Sparkles className="h-8 w-8" />
+            <h1 className="text-3xl md:text-4xl font-bold">Campus Marketplace</h1>
+          </div>
+          <p className="text-white/80 text-lg">
+            {total} {total === 1 ? "item" : "items"} available • Great deals from fellow students
+          </p>
+        </div>
       </div>
 
       <div className="flex flex-col gap-8 lg:flex-row">
         <aside className="w-full shrink-0 lg:w-64">
-          <div className="sticky top-20 rounded-lg border border-gray-200 bg-white p-4">
-            <div className="mb-4 flex items-center gap-2">
-              <SlidersHorizontal className="h-5 w-5 text-gray-600" />
-              <h2 className="font-semibold text-gray-900">Filters</h2>
+          <div className="sticky top-20 rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+            <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="h-5 w-5 text-indigo-600" />
+                <h2 className="font-semibold text-gray-900">Filters</h2>
+              </div>
             </div>
+            <div className="p-4">
 
             <form method="GET" className="space-y-6">
               {params.q && <input type="hidden" name="q" value={params.q} />}
@@ -245,18 +254,19 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
 
               <button
                 type="submit"
-                className="w-full rounded-lg bg-indigo-600 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-2.5 text-sm font-medium text-white transition-all hover:from-indigo-700 hover:to-purple-700 shadow-sm hover:shadow-md"
               >
                 Apply Filters
               </button>
 
               <Link
                 href="/marketplace"
-                className="block text-center text-sm text-gray-500 hover:text-indigo-600"
+                className="block text-center text-sm text-gray-500 hover:text-indigo-600 transition-colors"
               >
                 Clear all filters
               </Link>
             </form>
+            </div>
           </div>
         </aside>
 
@@ -271,13 +281,13 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               {page > 1 ? (
                 <Link
                   href={`/marketplace?${buildQueryString(currentParams, { page: String(page - 1) })}`}
-                  className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="flex items-center gap-1 rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   Previous
                 </Link>
               ) : (
-                <span className="flex cursor-not-allowed items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-400">
+                <span className="flex cursor-not-allowed items-center gap-1 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-400">
                   <ChevronLeft className="h-4 w-4" />
                   Previous
                 </span>
@@ -300,9 +310,9 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
                     <Link
                       key={pageNum}
                       href={`/marketplace?${buildQueryString(currentParams, { page: String(pageNum) })}`}
-                      className={`rounded-lg px-3 py-2 text-sm font-medium ${
+                      className={`rounded-xl px-3 py-2 text-sm font-medium transition-all ${
                         pageNum === page
-                          ? "bg-indigo-600 text-white"
+                          ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                     >
@@ -315,13 +325,13 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               {page < totalPages ? (
                 <Link
                   href={`/marketplace?${buildQueryString(currentParams, { page: String(page + 1) })}`}
-                  className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="flex items-center gap-1 rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Next
                   <ChevronRight className="h-4 w-4" />
                 </Link>
               ) : (
-                <span className="flex cursor-not-allowed items-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-400">
+                <span className="flex cursor-not-allowed items-center gap-1 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-400">
                   Next
                   <ChevronRight className="h-4 w-4" />
                 </span>

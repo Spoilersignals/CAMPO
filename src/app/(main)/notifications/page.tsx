@@ -83,9 +83,9 @@ export default async function NotificationsPage() {
                         {notification.body}
                       </p>
                     )}
-                    {notification.href && (
+                    {notification.link && (
                       <Link
-                        href={notification.href}
+                        href={notification.link}
                         className="mt-2 inline-block text-sm font-medium text-indigo-600 hover:underline"
                       >
                         View details →

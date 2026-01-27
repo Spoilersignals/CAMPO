@@ -2,19 +2,18 @@
 
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
-import { ArrowLeft, MessageCircle, UserPlus, Share2 } from "lucide-react";
+import { ArrowLeft, UserPlus } from "lucide-react";
 import { ShareButton } from "@/components/share-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { TelegramReactions } from "@/components/reactions/telegram-reactions";
+import { CommentThread } from "@/components/comments/comment-thread";
 import {
   getConfessionById,
-  addConfessionComment,
   toggleConfessionReaction,
   getConfessionReactions,
 } from "@/actions/confessions";
+
 import { formatRelativeTime } from "@/lib/utils";
 
 interface ConfessionData {
@@ -24,12 +23,6 @@ interface ConfessionData {
   shareCode: string | null;
   createdAt: Date;
   approvedAt: Date | null;
-  comments: Array<{
-    id: string;
-    content: string;
-    authorName: string | null;
-    createdAt: Date;
-  }>;
   _count: { reactions: number };
 }
 
@@ -41,12 +34,8 @@ export default function ConfessionPage({
   const { id } = use(params);
   const [confession, setConfession] = useState<ConfessionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [commentContent, setCommentContent] = useState("");
-  const [authorName, setAuthorName] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [reactions, setReactions] = useState<Array<{ emoji: string; count: number }>>([]);
   const [userReactions, setUserReactions] = useState<string[]>([]);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     loadConfession();
@@ -74,23 +63,6 @@ export default function ConfessionPage({
     if (result.success) {
       loadReactions();
     }
-  }
-
-  async function handleSubmitComment(e: React.FormEvent) {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError("");
-
-    const result = await addConfessionComment(id, commentContent, authorName || undefined);
-
-    if (result.success) {
-      setCommentContent("");
-      loadConfession();
-    } else {
-      setError(result.error || "Failed to add comment");
-    }
-
-    setIsSubmitting(false);
   }
 
   if (isLoading) {
@@ -185,72 +157,10 @@ export default function ConfessionPage({
         </CardContent>
       </Card>
 
-      <div className="mb-6">
-        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-900">
-          <MessageCircle className="h-5 w-5" />
-          Comments ({confession.comments.length})
-        </h2>
-
-        {confession.comments.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center">
-              <p className="text-gray-500">No comments yet. Be the first to comment!</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-3">
-            {confession.comments.map((comment) => (
-              <Card key={comment.id}>
-                <CardContent className="py-4">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="font-medium text-gray-900">
-                      {comment.authorName || "Anonymous"}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {formatRelativeTime(comment.createdAt)}
-                    </span>
-                  </div>
-                  <p className="text-gray-700">{comment.content}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <Card>
-        <CardContent className="pt-6">
-          <h3 className="mb-4 font-semibold text-gray-900">Add a Comment</h3>
-          <form onSubmit={handleSubmitComment}>
-            <Input
-              placeholder="Your name (optional - leave blank to be anonymous)"
-              value={authorName}
-              onChange={(e) => setAuthorName(e.target.value)}
-              className="mb-3"
-              maxLength={50}
-            />
-            <Textarea
-              placeholder="Write your comment..."
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-              className="mb-4"
-              maxLength={500}
-            />
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">
-                {commentContent.length}/500 characters
-              </span>
-              <Button type="submit" disabled={isSubmitting || !commentContent.trim()}>
-                {isSubmitting ? "Posting..." : "Post Comment"}
-              </Button>
-            </div>
-
-            {error && (
-              <div className="mt-4 rounded-lg bg-red-50 p-4 text-red-700">{error}</div>
-            )}
-          </form>
-        </CardContent>
-      </Card>
+      <CommentThread
+        contentType="confession"
+        contentId={id}
+      />
     </div>
   );
 }

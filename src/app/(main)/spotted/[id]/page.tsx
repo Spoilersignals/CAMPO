@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useCallback } from "react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { TelegramReactions } from "@/components/reactions/telegram-reactions";
+import { CommentThread, Comment } from "@/components/comments/comment-thread";
 import {
   getSpottedById,
   addSpottedComment,
@@ -40,36 +39,43 @@ export default function SpottedDetailPage({
   const [spotted, setSpotted] = useState<SpottedDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const [commentContent, setCommentContent] = useState("");
-  const [authorName, setAuthorName] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
 
   const [reactions, setReactions] = useState<Array<{ emoji: string; count: number }>>([]);
   const [userReactions, setUserReactions] = useState<string[]>([]);
 
-  useEffect(() => {
-    loadSpotted();
-    loadReactions();
-  }, [id]);
-
-  async function loadSpotted() {
+  const loadSpotted = useCallback(async () => {
     const result = await getSpottedById(id);
     if (result.success && result.data) {
       setSpotted(result.data);
+      setComments(
+        result.data.comments.map((c) => ({
+          id: c.id,
+          authorName: c.authorName || undefined,
+          content: c.content,
+          createdAt: c.createdAt,
+          reactions: [],
+          userReactions: [],
+        }))
+      );
     } else {
       setError(result.error || "Failed to load");
     }
     setLoading(false);
-  }
+  }, [id]);
 
-  async function loadReactions() {
+  const loadReactions = useCallback(async () => {
     const result = await getSpottedReactionsWithUser(id);
     if (result.success && result.data) {
       setReactions(result.data.reactions);
       setUserReactions(result.data.userReactions);
     }
-  }
+  }, [id]);
+
+  useEffect(() => {
+    loadSpotted();
+    loadReactions();
+  }, [loadSpotted, loadReactions]);
 
   async function handleReaction(emoji: string) {
     if (!spotted) return;
@@ -79,22 +85,12 @@ export default function SpottedDetailPage({
     }
   }
 
-  async function handleComment(e: React.FormEvent) {
-    e.preventDefault();
-    if (!spotted || !commentContent.trim()) return;
-    setSubmitting(true);
-
-    const result = await addSpottedComment(
-      spotted.id,
-      commentContent,
-      authorName || undefined
-    );
-
+  async function handleAddComment(content: string, authorName?: string) {
+    if (!spotted) return;
+    const result = await addSpottedComment(spotted.id, content, authorName);
     if (result.success) {
-      setCommentContent("");
       await loadSpotted();
     }
-    setSubmitting(false);
   }
 
   if (loading) {
@@ -218,60 +214,12 @@ export default function SpottedDetailPage({
       </Card>
 
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">
-          Comments ({spotted.comments.length})
-        </h2>
-
-        <Card>
-          <CardContent className="p-4">
-            <form onSubmit={handleComment} className="space-y-3">
-              <Textarea
-                placeholder="Add a comment..."
-                value={commentContent}
-                onChange={(e) => setCommentContent(e.target.value)}
-                className="min-h-[80px]"
-                required
-              />
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                <Input
-                  placeholder="Name (optional)"
-                  value={authorName}
-                  onChange={(e) => setAuthorName(e.target.value)}
-                  className="sm:max-w-[200px]"
-                />
-                <Button type="submit" disabled={submitting} size="sm">
-                  {submitting ? "Posting..." : "Post Comment"}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
-        {spotted.comments.length === 0 ? (
-          <p className="text-center text-sm text-gray-500">
-            No comments yet. Be the first to comment!
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {spotted.comments.map((comment) => (
-              <Card key={comment.id}>
-                <CardContent className="p-4">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="font-medium text-gray-900">
-                      {comment.authorName || "Anonymous"}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {formatRelativeTime(comment.createdAt)}
-                    </span>
-                  </div>
-                  <p className="whitespace-pre-wrap text-gray-700">
-                    {comment.content}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+        <CommentThread
+          contentType="spotted"
+          contentId={id}
+          initialComments={comments}
+          onAddComment={handleAddComment}
+        />
       </div>
     </div>
   );

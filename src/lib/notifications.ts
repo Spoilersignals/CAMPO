@@ -16,8 +16,8 @@ interface CreateNotificationParams {
   userId: string;
   type: NotificationType;
   title: string;
-  body?: string;
-  href?: string;
+  body: string;
+  link?: string;
 }
 
 export async function createNotification({
@@ -25,15 +25,15 @@ export async function createNotification({
   type,
   title,
   body,
-  href,
+  link,
 }: CreateNotificationParams) {
   return prisma.notification.create({
     data: {
       userId,
       type,
       title,
-      body: body || null,
-      href: href || null,
+      body,
+      link: link || null,
     },
   });
 }
@@ -71,7 +71,7 @@ export async function createNotificationsForMatchingSuggestions(
         type: "SUGGESTION_MATCH",
         title: "New listing matches your suggestion!",
         body: `A new listing matches your suggestion: "${listingTitle}"`,
-        href: `/listings/${listingId}`,
+        link: `/listings/${listingId}`,
       });
     } else if (request.guestEmail) {
       guestEmailsToNotify.push({
@@ -89,8 +89,8 @@ export async function createNotificationsForMatchingSuggestions(
         userId: n.userId,
         type: n.type,
         title: n.title,
-        body: n.body || null,
-        href: n.href || null,
+        body: n.body,
+        link: n.link || null,
       })),
     });
   }
