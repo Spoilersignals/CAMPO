@@ -2,8 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 
-// Extract hashtags from content
-export function extractHashtags(content: string): string[] {
+// Extract hashtags from content (internal helper, not exported as server action)
+function extractHashtagsFromContent(content: string): string[] {
   const regex = /#(\w+)/g;
   const matches = content.match(regex);
   if (!matches) return [];
@@ -16,7 +16,7 @@ export async function linkHashtags(
   contentType: "confession" | "crush" | "spotted",
   contentId: string
 ) {
-  const tags = extractHashtags(content);
+  const tags = extractHashtagsFromContent(content);
   if (tags.length === 0) return;
 
   for (const tagName of tags) {
