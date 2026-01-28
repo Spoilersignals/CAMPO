@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, UserPlus } from "lucide-react";
 import { ShareButton } from "@/components/share-button";
@@ -26,12 +27,9 @@ interface ConfessionData {
   _count: { reactions: number };
 }
 
-export default function ConfessionPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+export default function ConfessionPage() {
+  const params = useParams();
+  const id = params.id as string;
   const [confession, setConfession] = useState<ConfessionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [reactions, setReactions] = useState<Array<{ emoji: string; count: number }>>([]);

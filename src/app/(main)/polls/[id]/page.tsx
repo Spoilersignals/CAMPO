@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useTransition, use } from "react";
+import { useState, useEffect, useTransition } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, MessageCircle, Send, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,12 +43,9 @@ interface Poll {
   comments: Comment[];
 }
 
-interface PollDetailPageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default function PollDetailPage({ params }: PollDetailPageProps) {
-  const { id } = use(params);
+export default function PollDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
   const [poll, setPoll] = useState<Poll | null>(null);
   const [loading, setLoading] = useState(true);
   const [userVotedOption, setUserVotedOption] = useState<string | null>(null);

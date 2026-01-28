@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Star, TrendingUp, ThumbsUp, User, BookOpen } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,12 +36,9 @@ function StarRating({ rating, size = "sm" }: { rating: number | null; size?: "sm
   return <div className="flex items-center gap-0.5">{stars}</div>;
 }
 
-export default function ProfessorDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+export default function ProfessorDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
   const [professor, setProfessor] = useState<{
     id: string;
     name: string;

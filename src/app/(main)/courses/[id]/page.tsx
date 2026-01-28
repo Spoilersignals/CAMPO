@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Star, Clock, TrendingUp, ThumbsUp, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -146,12 +147,9 @@ const GRADE_OPTIONS = [
   "Not Applicable",
 ];
 
-export default function CourseDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+export default function CourseDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
   const [course, setCourse] = useState<{
     id: string;
     code: string;

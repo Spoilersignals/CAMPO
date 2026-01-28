@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, use, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,12 +31,9 @@ type SpottedDetail = {
   }>;
 };
 
-export default function SpottedDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+export default function SpottedDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
   const [spotted, setSpotted] = useState<SpottedDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
