@@ -187,15 +187,63 @@ export default function ConfessionStoriesPage() {
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Card dimensions
+    // Card dimensions - calculate based on content length
     const cardX = 80;
-    const cardY = 420;
     const cardWidth = canvas.width - 160;
-    const cardHeight = 580;
     const cornerRadius = 40;
+    const headerHeight = 180;
+    const padding = 60;
+    
+    // Determine font size and line height based on content length
+    const content = story.content;
+    let fontSize = 36;
+    let lineHeight = 48;
+    if (content.length > 800) {
+      fontSize = 24;
+      lineHeight = 32;
+    } else if (content.length > 500) {
+      fontSize = 28;
+      lineHeight = 38;
+    } else if (content.length > 300) {
+      fontSize = 32;
+      lineHeight = 42;
+    }
+    
+    // Calculate required height by measuring text
+    ctx.font = `bold ${fontSize}px system-ui`;
+    const maxWidth = cardWidth - 80;
+    const words = content.split(/(\s+)/); // Split but keep whitespace/newlines
+    const lines: string[] = [];
+    let currentLine = "";
+    
+    for (const word of words) {
+      if (word === "\n" || word === "\r\n") {
+        if (currentLine.trim()) lines.push(currentLine.trim());
+        currentLine = "";
+        continue;
+      }
+      const testLine = currentLine + word;
+      const metrics = ctx.measureText(testLine);
+      if (metrics.width > maxWidth && currentLine !== "") {
+        lines.push(currentLine.trim());
+        currentLine = word.trim() + " ";
+      } else {
+        currentLine = testLine;
+      }
+    }
+    if (currentLine.trim()) lines.push(currentLine.trim());
+    
+    // Calculate card height - content area + header + padding
+    const textHeight = lines.length * lineHeight;
+    const minContentHeight = 200;
+    const contentHeight = Math.max(textHeight + padding * 2, minContentHeight);
+    const cardHeight = headerHeight + contentHeight;
+    
+    // Position card vertically centered but with room for branding
+    const maxCardY = 1500; // Leave room for branding at bottom
+    const cardY = Math.min(Math.max(300, (canvas.height - cardHeight - 300) / 2), maxCardY - cardHeight);
 
     // Draw gradient header (pink to orange)
-    const headerHeight = 180;
     ctx.save();
     ctx.beginPath();
     ctx.roundRect(cardX, cardY, cardWidth, cardHeight, cornerRadius);
@@ -228,33 +276,13 @@ export default function ConfessionStoriesPage() {
 
     // Confession text on white background
     ctx.fillStyle = "#1a1a1a";
-    ctx.font = "bold 38px system-ui";
+    ctx.font = `bold ${fontSize}px system-ui`;
     ctx.textAlign = "center";
     
-    const maxWidth = cardWidth - 80;
-    const lineHeight = 52;
-    const words = story.content.split(" ");
-    let line = "";
-    let y = cardY + headerHeight + 80;
-    const maxY = cardY + cardHeight - 40;
-    
-    for (const word of words) {
-      const testLine = line + word + " ";
-      const metrics = ctx.measureText(testLine);
-      if (metrics.width > maxWidth && line !== "") {
-        ctx.fillText(line.trim(), canvas.width / 2, y);
-        line = word + " ";
-        y += lineHeight;
-        if (y > maxY) {
-          ctx.fillText("...", canvas.width / 2, y);
-          break;
-        }
-      } else {
-        line = testLine;
-      }
-    }
-    if (y <= maxY && line.trim()) {
-      ctx.fillText(line.trim(), canvas.width / 2, y);
+    let y = cardY + headerHeight + padding;
+    for (const line of lines) {
+      ctx.fillText(line, canvas.width / 2, y);
+      y += lineHeight;
     }
 
     // Bottom branding
@@ -276,6 +304,13 @@ export default function ConfessionStoriesPage() {
 
     const canvas = createStoryCanvas(currentStory);
     const confessionUrl = getConfessionUrl(currentStory);
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+
+    // Copy link to clipboard for link sticker
+    try {
+      await navigator.clipboard.writeText(confessionUrl);
+    } catch {}
 
     // Try Web Share API first
     if (navigator.share && navigator.canShare) {
@@ -290,7 +325,6 @@ export default function ConfessionStoriesPage() {
           const shareData = {
             files: [file],
             title: `Confession #${currentStory.confessionNumber}`,
-            text: `Check out this confession! ${confessionUrl}`,
           };
           if (navigator.canShare(shareData)) {
             await navigator.share(shareData);
@@ -313,6 +347,19 @@ export default function ConfessionStoriesPage() {
     link.download = `confession-${currentStory.confessionNumber}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
+
+    // On mobile, try to open Instagram Stories after download
+    if (isMobile) {
+      setTimeout(() => {
+        if (isAndroid) {
+          window.location.href = "intent://story-camera#Intent;package=com.instagram.android;scheme=instagram;end";
+        } else {
+          window.location.href = "instagram-stories://share";
+        }
+      }, 500);
+      alert("Image saved & link copied! Select the image from your gallery and paste the link as a sticker.");
+    }
+    
     setShowShareMenu(false);
   }
 

@@ -46,7 +46,7 @@ interface MenuSection {
 const mainItems: MenuItem[] = [
   { href: "/", icon: Home, label: "Home", shortLabel: "Home" },
   { href: "/confessions", icon: MessageSquare, label: "Confessions", shortLabel: "Confess" },
-  { href: "/crushes", icon: Heart, label: "Crushes", shortLabel: "Crushes" },
+  { href: "/dating", icon: Heart, label: "Campus Match", shortLabel: "Match" },
   { href: "/spotted", icon: Eye, label: "Spotted", shortLabel: "Spotted" },
   { href: "/chat", icon: MessagesSquare, label: "Campus Chat", shortLabel: "Chat" },
 ];
@@ -78,7 +78,7 @@ const mobileItems: MenuItem[] = [
   { href: "/", icon: Home, label: "Home", shortLabel: "Home" },
   { href: "/confessions", icon: MessageSquare, label: "Confessions", shortLabel: "Confess" },
   { href: "/chat", icon: MessagesSquare, label: "Chat", shortLabel: "Chat" },
-  { href: "/crushes", icon: Heart, label: "Crushes", shortLabel: "Crushes" },
+  { href: "/dating", icon: Heart, label: "Match", shortLabel: "Match" },
   { href: "/marketplace", icon: ShoppingBag, label: "Shop", shortLabel: "Shop" },
 ];
 

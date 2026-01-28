@@ -181,7 +181,7 @@ function FeedCard({ item }: { item: FeedItem }) {
 const tabs = [
   { id: "foryou", label: "For You", href: "/" },
   { id: "confessions", label: "Confessions", href: "/confessions" },
-  { id: "crushes", label: "Crushes", href: "/crushes" },
+  { id: "dating", label: "Match 💕", href: "/dating" },
   { id: "spotted", label: "Spotted", href: "/spotted" },
 ];
 
@@ -238,13 +238,13 @@ export default async function HomePage() {
             <span className="text-xs font-medium text-purple-700">Confess</span>
           </Link>
           <Link
-            href="/crushes/new"
+            href="/dating"
             className="flex flex-col items-center gap-2 rounded-xl border border-pink-100 bg-pink-50 p-3 transition-all hover:border-pink-200 hover:shadow-sm"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-rose-500">
               <Heart className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xs font-medium text-pink-700">Crush</span>
+            <span className="text-xs font-medium text-pink-700">Match</span>
           </Link>
           <Link
             href="/spotted/new"

@@ -57,6 +57,7 @@ model User {
   followers             Follow[]            @relation("Followers")
   following             Follow[]            @relation("Following")
   receivedQuestions     AnonQuestion[]      @relation("ReceivedQuestions")
+  datingProfile         DatingProfile?
 }
 
 model Follow {
@@ -1159,4 +1160,152 @@ model LeaderboardEntry {
 
   @@unique([sessionId, category, period, periodStart])
   @@index([category, period, score])
+}
+
+// ============ DATING / CAMPUS MATCH ============
+
+model DatingProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Basic Info
+  displayName String
+  bio         String?
+  age         Int
+  gender      String // MALE, FEMALE, NON_BINARY, OTHER
+  lookingFor  String[] // Array of genders they're interested in
+
+  // Academic Info
+  course      String?
+  yearOfStudy Int?
+  faculty     String?
+
+  // Interests & Lifestyle
+  interests        String[] // Array of interest tags
+  height           String? // e.g., "5'10" or "178cm"
+  relationshipGoal String? // RELATIONSHIP, CASUAL, FRIENDS, NOT_SURE
+
+  // Social Links
+  instagramHandle String?
+  spotifyArtists  String? // Favorite artists
+
+  // Prompts/Icebreakers
+  prompt1Question String?
+  prompt1Answer   String?
+  prompt2Question String?
+  prompt2Answer   String?
+  prompt3Question String?
+  prompt3Answer   String?
+
+  // Preferences
+  minAge      Int     @default(18)
+  maxAge      Int     @default(30)
+  maxDistance Int? // in km, null = no limit
+  showMe      Boolean @default(true) // Whether to show in discovery
+
+  // Stats
+  superLikesRemaining Int      @default(3)
+  lastSuperLikeReset  DateTime @default(now())
+  profileCompleteness Int      @default(0) // 0-100 percentage
+
+  isActive   Boolean  @default(true)
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  photos         DatingPhoto[]
+  sentSwipes     DatingSwipe[]   @relation("SentSwipes")
+  receivedSwipes DatingSwipe[]   @relation("ReceivedSwipes")
+  matches1       DatingMatch[]   @relation("MatchUser1")
+  matches2       DatingMatch[]   @relation("MatchUser2")
+  sentMessages   DatingMessage[]
+  reports        DatingReport[]  @relation("ReportedProfiles")
+  reportsMade    DatingReport[]  @relation("ReportsMade")
+  blocks         DatingBlock[]   @relation("BlockedProfiles")
+  blockedBy      DatingBlock[]   @relation("BlockedBy")
+
+  @@index([gender])
+  @@index([isActive, showMe])
+}
+
+model DatingPhoto {
+  id              String        @id @default(cuid())
+  url             String
+  sortOrder       Int           @default(0)
+  isMain          Boolean       @default(false)
+  datingProfileId String
+  datingProfile   DatingProfile @relation(fields: [datingProfileId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+
+  @@index([datingProfileId])
+}
+
+model DatingSwipe {
+  id        String        @id @default(cuid())
+  swiperId  String
+  swiper    DatingProfile @relation("SentSwipes", fields: [swiperId], references: [id], onDelete: Cascade)
+  swipedId  String
+  swiped    DatingProfile @relation("ReceivedSwipes", fields: [swipedId], references: [id], onDelete: Cascade)
+  type      String // LIKE, PASS, SUPER_LIKE
+  createdAt DateTime      @default(now())
+
+  @@unique([swiperId, swipedId])
+  @@index([swipedId, type])
+}
+
+model DatingMatch {
+  id         String        @id @default(cuid())
+  profile1Id String
+  profile1   DatingProfile @relation("MatchUser1", fields: [profile1Id], references: [id], onDelete: Cascade)
+  profile2Id String
+  profile2   DatingProfile @relation("MatchUser2", fields: [profile2Id], references: [id], onDelete: Cascade)
+
+  isActive      Boolean   @default(true) // false if unmatched
+  matchedAt     DateTime  @default(now())
+  lastMessageAt DateTime?
+
+  messages DatingMessage[]
+
+  @@unique([profile1Id, profile2Id])
+  @@index([profile1Id, isActive])
+  @@index([profile2Id, isActive])
+}
+
+model DatingMessage {
+  id        String        @id @default(cuid())
+  matchId   String
+  match     DatingMatch   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    DatingProfile @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content   String
+  isRead    Boolean       @default(false)
+  createdAt DateTime      @default(now())
+
+  @@index([matchId, createdAt])
+}
+
+model DatingReport {
+  id         String        @id @default(cuid())
+  reporterId String
+  reporter   DatingProfile @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedId String
+  reported   DatingProfile @relation("ReportedProfiles", fields: [reportedId], references: [id], onDelete: Cascade)
+  reason     String // INAPPROPRIATE_PHOTOS, HARASSMENT, FAKE_PROFILE, SPAM, OTHER
+  details    String?
+  status     String        @default("PENDING") // PENDING, REVIEWED, ACTIONED
+  createdAt  DateTime      @default(now())
+
+  @@index([status])
+}
+
+model DatingBlock {
+  id        String        @id @default(cuid())
+  blockerId String
+  blocker   DatingProfile @relation("BlockedProfiles", fields: [blockerId], references: [id], onDelete: Cascade)
+  blockedId String
+  blocked   DatingProfile @relation("BlockedBy", fields: [blockedId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+
+  @@unique([blockerId, blockedId])
 }
