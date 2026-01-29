@@ -465,6 +465,11 @@ model Confession {
   createdAt        DateTime  @default(now())
   approvedAt       DateTime?
   expiresAt        DateTime? // For story-style expiration (24h from approval)
+  mediaUrl         String? // URL for photo/video
+  mediaType        String? // "image" or "video"
+  linkUrl          String? // External link URL
+  linkTitle        String? // Link preview title
+  linkImage        String? // Link preview image
 
   comments     Comment[] // Unified comment model
   oldComments  ConfessionComment[] // @deprecated - use comments instead

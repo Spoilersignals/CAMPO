@@ -12,7 +12,14 @@ type ActionResult<T = undefined> = {
 };
 
 export async function submitConfession(
-  content: string
+  content: string,
+  options?: {
+    mediaUrl?: string;
+    mediaType?: "image" | "video";
+    linkUrl?: string;
+    linkTitle?: string;
+    linkImage?: string;
+  }
 ): Promise<ActionResult<{ id: string }>> {
   try {
     if (!content || content.trim().length < 10) {
@@ -27,6 +34,11 @@ export async function submitConfession(
       data: {
         content: content.trim(),
         status: "PENDING",
+        mediaUrl: options?.mediaUrl,
+        mediaType: options?.mediaType,
+        linkUrl: options?.linkUrl,
+        linkTitle: options?.linkTitle,
+        linkImage: options?.linkImage,
       },
     });
 
@@ -138,6 +150,11 @@ export async function getConfessionById(
     shareCode: string | null;
     createdAt: Date;
     approvedAt: Date | null;
+    mediaUrl: string | null;
+    mediaType: string | null;
+    linkUrl: string | null;
+    linkTitle: string | null;
+    linkImage: string | null;
     comments: Array<{
       id: string;
       content: string;
@@ -161,6 +178,11 @@ export async function getConfessionById(
         shareCode: true,
         createdAt: true,
         approvedAt: true,
+        mediaUrl: true,
+        mediaType: true,
+        linkUrl: true,
+        linkTitle: true,
+        linkImage: true,
         comments: {
           select: {
             id: true,
