@@ -49,10 +49,18 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:bg-gray-900 dark:border-gray-800 shadow-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4">
+          {/* Profile icon on the left - mobile only */}
+          <Link
+            href={session?.user ? "/profile" : "/login"}
+            className="flex md:hidden h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600"
+          >
+            <User className="h-5 w-5" />
+          </Link>
+          
           <Link href="/" className="flex items-center gap-2 text-xl font-bold text-indigo-600">
             <MessageCircle className="h-6 w-6" />
-            ComradeZone
+            <span className="hidden sm:inline">ComradeZone</span>
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
