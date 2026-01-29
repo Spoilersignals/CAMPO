@@ -7,7 +7,8 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml* ./
 COPY prisma ./prisma
-RUN corepack enable pnpm && pnpm i --frozen-lockfile
+RUN corepack enable pnpm && pnpm i --frozen-lockfile --ignore-scripts
+RUN npx prisma generate
 
 # Rebuild the source code only when needed
 FROM base AS builder
