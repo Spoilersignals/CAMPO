@@ -164,11 +164,28 @@ export async function deleteDatingPhoto(photoId: string) {
   return { success: true };
 }
 
+// Get profiles for browsing (guests can browse, but need account to interact)
+export async function getBrowseProfiles(limit: number = 10) {
+  const profiles = await prisma.datingProfile.findMany({
+    where: {
+      isActive: true,
+      showMe: true,
+    },
+    include: {
+      photos: { orderBy: { sortOrder: "asc" } },
+    },
+    take: limit,
+    orderBy: [{ profileCompleteness: "desc" }, { createdAt: "desc" }],
+  });
+
+  return { success: true, data: profiles };
+}
+
 // Get profiles to swipe on
 export async function getDiscoveryProfiles(limit: number = 10) {
   const session = await auth();
   if (!session?.user?.id) {
-    return { success: false, error: "Not authenticated" };
+    return { success: false, error: "Not authenticated", needsAuth: true };
   }
 
   const myProfile = await prisma.datingProfile.findUnique({

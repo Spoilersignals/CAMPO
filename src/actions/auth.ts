@@ -4,11 +4,14 @@ import { hash, compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { loginSchema, registerSchema } from "@/lib/validators";
 import { redirect } from "next/navigation";
+import { sendVerificationEmail, generateVerificationCode } from "@/lib/email";
 
 type ActionState = {
   error?: string;
   fieldErrors?: Record<string, string[]>;
   success?: boolean;
+  pendingVerification?: boolean;
+  email?: string;
 } | null;
 
 export async function register(
@@ -41,6 +44,31 @@ export async function register(
   });
 
   if (existingUser) {
+    if (!existingUser.emailVerified) {
+      // Resend verification code
+      const code = generateVerificationCode();
+      const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+      await prisma.verificationToken.deleteMany({
+        where: { identifier: email },
+      });
+
+      await prisma.verificationToken.create({
+        data: {
+          identifier: email,
+          token: code,
+          expires,
+        },
+      });
+
+      await sendVerificationEmail(email, code, existingUser.name || "User");
+
+      return { 
+        pendingVerification: true, 
+        email,
+        error: "An account exists but is not verified. We've sent a new verification code."
+      };
+    }
     return { error: "An account with this email already exists" };
   }
 
@@ -56,6 +84,93 @@ export async function register(
       schoolName,
     },
   });
+
+  // Generate and send verification code
+  const code = generateVerificationCode();
+  const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+  await prisma.verificationToken.create({
+    data: {
+      identifier: email,
+      token: code,
+      expires,
+    },
+  });
+
+  await sendVerificationEmail(email, code, name);
+
+  return { pendingVerification: true, email };
+}
+
+export async function verifyEmail(
+  email: string,
+  code: string
+): Promise<{ success: boolean; error?: string }> {
+  const token = await prisma.verificationToken.findFirst({
+    where: {
+      identifier: email,
+      token: code,
+    },
+  });
+
+  if (!token) {
+    return { success: false, error: "Invalid verification code" };
+  }
+
+  if (token.expires < new Date()) {
+    await prisma.verificationToken.delete({
+      where: { identifier_token: { identifier: email, token: code } },
+    });
+    return { success: false, error: "Verification code has expired" };
+  }
+
+  // Mark email as verified
+  await prisma.user.update({
+    where: { email },
+    data: { emailVerified: new Date() },
+  });
+
+  // Delete the used token
+  await prisma.verificationToken.delete({
+    where: { identifier_token: { identifier: email, token: code } },
+  });
+
+  return { success: true };
+}
+
+export async function resendVerificationCode(
+  email: string
+): Promise<{ success: boolean; error?: string }> {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    return { success: false, error: "User not found" };
+  }
+
+  if (user.emailVerified) {
+    return { success: false, error: "Email is already verified" };
+  }
+
+  // Delete existing tokens
+  await prisma.verificationToken.deleteMany({
+    where: { identifier: email },
+  });
+
+  // Generate new code
+  const code = generateVerificationCode();
+  const expires = new Date(Date.now() + 15 * 60 * 1000);
+
+  await prisma.verificationToken.create({
+    data: {
+      identifier: email,
+      token: code,
+      expires,
+    },
+  });
+
+  await sendVerificationEmail(email, code, user.name || "User");
 
   return { success: true };
 }

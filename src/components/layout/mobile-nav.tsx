@@ -316,7 +316,7 @@ export function MobileNav({ user, isAdmin }: MobileNavProps) {
                     className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100"
                   >
                     <LogIn className="h-5 w-5" />
-                    Seller Login
+                    Log In
                   </Link>
                   <Link
                     href="/register"
@@ -324,7 +324,7 @@ export function MobileNav({ user, isAdmin }: MobileNavProps) {
                     className="flex items-center gap-3 rounded-lg bg-indigo-600 px-3 py-2.5 text-white hover:bg-indigo-700"
                   >
                     <UserPlus className="h-5 w-5" />
-                    Become a Seller
+                    Create Account
                   </Link>
                 </div>
               )}

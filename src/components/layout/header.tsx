@@ -235,15 +235,18 @@ export async function Header() {
             <div className="hidden items-center gap-3 md:flex">
               <Link
                 href="/login"
-                className="text-sm font-medium text-gray-700 hover:text-indigo-600"
+                className="flex items-center gap-2 rounded-full border border-gray-300 py-1.5 pl-1.5 pr-3 hover:bg-gray-50"
               >
-                Seller Login
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-500">
+                  <User className="h-4 w-4" />
+                </div>
+                <span className="text-sm font-medium text-gray-700">Log In</span>
               </Link>
               <Link
                 href="/register"
                 className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
               >
-                Become a Seller
+                Create Account
               </Link>
             </div>
           )}

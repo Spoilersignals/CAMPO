@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Heart, X, Star, ChevronLeft, ChevronRight, MapPin, GraduationCap, Sparkles, MessageCircle } from "lucide-react";
+import Link from "next/link";
+import { Heart, X, Star, ChevronLeft, ChevronRight, MapPin, GraduationCap, Sparkles, MessageCircle, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getDiscoveryProfiles, swipeProfile, getMyDatingProfile } from "@/actions/dating";
+import { getDiscoveryProfiles, getMyDatingProfile, swipeProfile, getBrowseProfiles } from "@/actions/dating";
 
 type DatingProfile = {
   id: string;
@@ -38,10 +39,12 @@ export default function DatingPage() {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [hasProfile, setHasProfile] = useState(true);
+  const [isGuest, setIsGuest] = useState(false);
   const [showMatch, setShowMatch] = useState(false);
   const [matchedProfile, setMatchedProfile] = useState<DatingProfile | null>(null);
   const [swipeAnimation, setSwipeAnimation] = useState<"left" | "right" | "super" | null>(null);
   const [superLikesRemaining, setSuperLikesRemaining] = useState(3);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -52,6 +55,18 @@ export default function DatingPage() {
     
     // Check if user has a dating profile
     const profileResult = await getMyDatingProfile();
+    
+    if (!profileResult.success && profileResult.error === "Not authenticated") {
+      // User is a guest - show browse mode
+      setIsGuest(true);
+      const browseResult = await getBrowseProfiles(20);
+      if (browseResult.success && browseResult.data) {
+        setProfiles(browseResult.data);
+      }
+      setIsLoading(false);
+      return;
+    }
+    
     if (!profileResult.data) {
       setHasProfile(false);
       setIsLoading(false);
@@ -71,6 +86,11 @@ export default function DatingPage() {
   }
 
   async function handleSwipe(type: "LIKE" | "PASS" | "SUPER_LIKE") {
+    if (isGuest) {
+      setShowAuthPrompt(true);
+      return;
+    }
+
     const currentProfile = profiles[currentIndex];
     if (!currentProfile) return;
 
@@ -118,7 +138,7 @@ export default function DatingPage() {
     );
   }
 
-  if (!hasProfile) {
+  if (!hasProfile && !isGuest) {
     return (
       <div className="flex min-h-[80vh] items-center justify-center px-4">
         <Card className="max-w-md p-8 text-center">
@@ -149,15 +169,34 @@ export default function DatingPage() {
           </div>
           <h2 className="mb-2 text-xl font-bold text-gray-900">No More Profiles</h2>
           <p className="mb-6 text-gray-600">
-            You&apos;ve seen everyone for now! Check back later for new matches.
+            {isGuest 
+              ? "Create an account to start matching with people on campus!"
+              : "You've seen everyone for now! Check back later for new matches."}
           </p>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => router.push("/dating/matches")} className="flex-1">
-              View Matches
-            </Button>
-            <Button onClick={loadData} className="flex-1 bg-pink-600 hover:bg-pink-700">
-              Refresh
-            </Button>
+            {isGuest ? (
+              <>
+                <Link href="/register" className="flex-1">
+                  <Button className="w-full bg-pink-600 hover:bg-pink-700">
+                    Create Account
+                  </Button>
+                </Link>
+                <Link href="/login" className="flex-1">
+                  <Button variant="outline" className="w-full">
+                    Log In
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" onClick={() => router.push("/dating/matches")} className="flex-1">
+                  View Matches
+                </Button>
+                <Button onClick={loadData} className="flex-1 bg-pink-600 hover:bg-pink-700">
+                  Refresh
+                </Button>
+              </>
+            )}
           </div>
         </Card>
       </div>
@@ -169,30 +208,49 @@ export default function DatingPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-6">
+      {/* Guest Banner */}
+      {isGuest && (
+        <div className="mb-4 rounded-lg bg-gradient-to-r from-pink-500 to-rose-500 p-4 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Create an account to match!</p>
+              <p className="text-sm text-white/80">Like, match, and chat with people on campus</p>
+            </div>
+            <Link href="/register">
+              <Button size="sm" className="bg-white text-pink-600 hover:bg-white/90">
+                Sign Up
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
           Campus Match
         </h1>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/dating/likes")}
-            className="text-pink-600"
-          >
-            <Heart className="mr-1 h-4 w-4" />
-            Likes
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/dating/matches")}
-          >
-            <MessageCircle className="mr-1 h-4 w-4" />
-            Matches
-          </Button>
-        </div>
+        {!isGuest && (
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/dating/likes")}
+              className="text-pink-600"
+            >
+              <Heart className="mr-1 h-4 w-4" />
+              Likes
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/dating/matches")}
+            >
+              <MessageCircle className="mr-1 h-4 w-4" />
+              Matches
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Profile Card */}
@@ -310,7 +368,7 @@ export default function DatingPage() {
         <Button
           onClick={() => handleSwipe("SUPER_LIKE")}
           size="lg"
-          disabled={superLikesRemaining <= 0}
+          disabled={!isGuest && superLikesRemaining <= 0}
           className="h-14 w-14 rounded-full bg-blue-500 p-0 hover:bg-blue-600 disabled:opacity-50"
         >
           <Star className="h-6 w-6 text-white" />
@@ -325,9 +383,48 @@ export default function DatingPage() {
         </Button>
       </div>
       
-      <p className="mt-2 text-center text-xs text-gray-400">
-        {superLikesRemaining} Super Likes remaining today
-      </p>
+      {!isGuest && (
+        <p className="mt-2 text-center text-xs text-gray-400">
+          {superLikesRemaining} Super Likes remaining today
+        </p>
+      )}
+
+      {/* Auth Prompt Modal */}
+      {showAuthPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="w-full max-w-sm animate-in zoom-in-95 rounded-2xl bg-white p-6 text-center">
+            <div className="mb-4">
+              <LogIn className="mx-auto h-16 w-16 text-pink-500" />
+            </div>
+            <h2 className="mb-2 text-2xl font-bold text-gray-900">
+              Create an Account
+            </h2>
+            <p className="mb-6 text-gray-600">
+              Sign up with ComradeZone to like, match, and chat with people on campus!
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowAuthPrompt(false)}
+                className="flex-1"
+              >
+                Maybe Later
+              </Button>
+              <Link href="/register" className="flex-1">
+                <Button className="w-full bg-gradient-to-r from-pink-500 to-rose-500">
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+            <p className="mt-4 text-sm text-gray-500">
+              Already have an account?{" "}
+              <Link href="/login" className="text-pink-600 hover:underline">
+                Log in
+              </Link>
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Match Modal */}
       {showMatch && matchedProfile && (
