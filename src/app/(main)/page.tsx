@@ -16,6 +16,10 @@ import {
   Zap,
   Star,
   MessageCircle,
+  Lightbulb,
+  HandHeart,
+  Play,
+  Video,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatDistanceToNow } from "date-fns";
@@ -43,6 +47,25 @@ type Stats = {
   activeUsers: number;
   itemsListed: number;
   messagesSent: number;
+};
+
+type Suggestion = {
+  id: string;
+  content: string;
+  userName: string | null;
+  createdAt: Date;
+  expiresAt: Date;
+  _count: { responses: number };
+};
+
+type VideoPreview = {
+  id: string;
+  thumbnailUrl: string | null;
+  caption: string | null;
+  duration: number;
+  viewCount: number;
+  user: { name: string | null; image: string | null };
+  _count: { likes: number; comments: number };
 };
 
 async function getMarketplaceListings(): Promise<Listing[]> {
@@ -85,6 +108,52 @@ async function getStats(): Promise<Stats> {
     itemsListed: listings,
     messagesSent: messages,
   };
+}
+
+async function getActiveSuggestions(): Promise<Suggestion[]> {
+  const suggestions = await prisma.itemSuggestion.findMany({
+    where: {
+      status: "ACTIVE",
+      expiresAt: { gt: new Date() },
+    },
+    include: {
+      user: { select: { name: true } },
+      _count: { select: { responses: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
+
+  return suggestions.map((s) => ({
+    id: s.id,
+    content: s.content,
+    userName: s.user?.name || null,
+    createdAt: s.createdAt,
+    expiresAt: s.expiresAt,
+    _count: s._count,
+  }));
+}
+
+async function getVideoPreview(): Promise<VideoPreview[]> {
+  const videos = await prisma.videoPost.findMany({
+    where: { status: "ACTIVE" },
+    include: {
+      user: { select: { name: true, image: true } },
+      _count: { select: { likes: true, comments: true } },
+    },
+    orderBy: { viewCount: "desc" },
+    take: 6,
+  });
+
+  return videos.map((v) => ({
+    id: v.id,
+    thumbnailUrl: v.thumbnailUrl,
+    caption: v.caption,
+    duration: v.duration,
+    viewCount: v.viewCount,
+    user: v.user,
+    _count: v._count,
+  }));
 }
 
 function AnimatedCounter({ value, label }: { value: number; label: string }) {
@@ -261,11 +330,76 @@ function FeatureCard({
   );
 }
 
+function VideoPreviewCard({ video, index }: { video: VideoPreview; index: number }) {
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const formatViews = (count: number) => {
+    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+    if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+    return count.toString();
+  };
+
+  return (
+    <Link
+      href="/videos"
+      className={`group flex-shrink-0 w-[160px] sm:w-[180px] overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900 to-black shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:scale-105 opacity-0 animate-slide-up`}
+      style={{ animationDelay: `${index * 100}ms`, animationFillMode: "forwards" }}
+    >
+      <div className="relative aspect-[9/16] overflow-hidden">
+        {video.thumbnailUrl ? (
+          <Image
+            src={video.thumbnailUrl}
+            alt={video.caption || "Video"}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-110"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600">
+            <Video className="h-12 w-12 text-white/50" />
+          </div>
+        )}
+        
+        {/* Play button overlay */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="rounded-full bg-white/30 p-3 backdrop-blur-sm">
+            <Play className="h-8 w-8 text-white" fill="white" />
+          </div>
+        </div>
+        
+        {/* Duration badge */}
+        <div className="absolute bottom-2 right-2 rounded-md bg-black/70 px-1.5 py-0.5 text-xs font-medium text-white">
+          {formatDuration(video.duration)}
+        </div>
+        
+        {/* Stats overlay at bottom */}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+          <div className="flex items-center gap-3 text-xs text-white/90">
+            <span className="flex items-center gap-1">
+              <Play className="h-3 w-3" />
+              {formatViews(video.viewCount)}
+            </span>
+            <span className="flex items-center gap-1">
+              <Heart className="h-3 w-3" />
+              {formatViews(video._count.likes)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default async function HomePage() {
-  const [listings, confessions, stats] = await Promise.all([
+  const [listings, confessions, stats, suggestions, videos] = await Promise.all([
     getMarketplaceListings(),
     getLatestConfessions(),
     getStats(),
+    getActiveSuggestions(),
+    getVideoPreview(),
   ]);
 
   return (
@@ -400,8 +534,103 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* For You - Video Feed Preview */}
+      {videos.length > 0 && (
+        <section className="mt-12 py-12 bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 overflow-hidden">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 shadow-lg shadow-pink-500/30">
+                  <Play className="h-5 w-5 text-white" fill="white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">For You</h2>
+                  <p className="text-sm text-purple-300">Trending videos on campus</p>
+                </div>
+              </div>
+              <Link
+                href="/videos"
+                className="flex items-center gap-1 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition-all hover:bg-white/20"
+              >
+                Watch All <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="relative">
+              <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
+                {videos.map((video, index) => (
+                  <VideoPreviewCard key={video.id} video={video} index={index} />
+                ))}
+              </div>
+              <div className="absolute right-0 top-0 bottom-4 w-20 bg-gradient-to-l from-gray-900 to-transparent pointer-events-none" />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Item Suggestions - I Need Section */}
+      {suggestions.length > 0 && (
+        <section className="py-12 bg-gradient-to-r from-amber-50 to-orange-50">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/30">
+                  <Lightbulb className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">People Are Looking For</h2>
+                  <p className="text-sm text-gray-600">Help someone find what they need</p>
+                </div>
+              </div>
+              <Link
+                href="/suggestions"
+                className="flex items-center gap-1 text-sm font-medium text-amber-600 transition-colors hover:text-amber-700"
+              >
+                View All <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {suggestions.slice(0, 6).map((suggestion, index) => (
+                <Link
+                  key={suggestion.id}
+                  href={`/suggestions/${suggestion.id}`}
+                  className={`group rounded-xl border border-amber-200 bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-amber-300 hover:-translate-y-1 opacity-0 animate-slide-up`}
+                  style={{ animationDelay: `${index * 100}ms`, animationFillMode: "forwards" }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-100 to-orange-100">
+                      <HandHeart className="h-5 w-5 text-amber-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-900 font-medium line-clamp-2">&quot;{suggestion.content}&quot;</p>
+                      <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          Expires {formatDistanceToNow(suggestion.expiresAt, { addSuffix: true })}
+                        </span>
+                        {suggestion._count.responses > 0 && (
+                          <span className="rounded-full bg-green-100 px-2 py-0.5 text-green-700">
+                            {suggestion._count.responses} offers
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex justify-end">
+                    <span className="text-xs font-medium text-amber-600 group-hover:text-amber-700 transition-colors">
+                      I have this →
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Live Marketplace Preview */}
-      <section className="mt-16 py-12 bg-white">
+      <section className="mt-0 py-12 bg-white">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">

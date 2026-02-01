@@ -3,8 +3,8 @@
 import { hash, compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { loginSchema, registerSchema } from "@/lib/validators";
-import { redirect } from "next/navigation";
 import { sendVerificationEmail, generateVerificationCode } from "@/lib/email";
+import { isKabarakEmail, getSchoolFromEmail } from "@/lib/moderation";
 
 type ActionState = {
   error?: string;
@@ -38,6 +38,19 @@ export async function register(
   }
 
   const { name, email, password, phone, studentId, schoolName } = result.data;
+
+  // Validate Kabarak University email
+  if (!isKabarakEmail(email)) {
+    return { 
+      error: "Only @kabarak.ac.ke email addresses are allowed. Please use your university email.",
+      fieldErrors: {
+        email: ["Email must end with @kabarak.ac.ke"],
+      },
+    };
+  }
+
+  // Auto-detect school from email
+  const detectedSchool = getSchoolFromEmail(email) || schoolName;
 
   const existingUser = await prisma.user.findUnique({
     where: { email },
@@ -81,7 +94,7 @@ export async function register(
       password: hashedPassword,
       phone,
       studentId,
-      schoolName,
+      schoolName: detectedSchool,
     },
   });
 

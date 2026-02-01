@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { ListingDetail, ListingGrid } from "@/components/listings";
 import { GuestChat } from "@/components/chat";
 import type { Condition, DeliveryMethod } from "@/lib/constants";
+import { MessageCircle } from "lucide-react";
 
 interface ListingPageProps {
   params: Promise<{ id: string }>;
@@ -161,7 +163,14 @@ export default async function ListingPage({ params }: ListingPageProps) {
 
         <div className="lg:col-span-1">
           {!isOwnListing && (
-            <div className="sticky top-4">
+            <div className="sticky top-4 space-y-4">
+              <Link
+                href={`/marketplace/${listing.id}/chat`}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-medium text-white transition-all hover:from-purple-700 hover:to-pink-700 hover:shadow-lg"
+              >
+                <MessageCircle className="h-5 w-5" />
+                Contact Seller
+              </Link>
               <GuestChat
                 listingId={listing.id}
                 sellerId={listing.seller.id}

@@ -58,6 +58,11 @@ model User {
   following             Follow[]            @relation("Following")
   receivedQuestions     AnonQuestion[]      @relation("ReceivedQuestions")
   datingProfile         DatingProfile?
+  videoPosts            VideoPost[]
+  itemSuggestions       ItemSuggestion[]
+  suggestionResponses   ItemSuggestionResponse[]
+  campusChatMessages    CampusChatMessage[]
+  reposts               Repost[]
 }
 
 model Follow {
@@ -136,6 +141,7 @@ model Listing {
   deliveryMethod      String // CAMPUS_MEET, HOSTEL_DELIVERY, PICKUP
   pickupLocation      String?
   status              String    @default("PENDING") // PENDING, ACTIVE, SOLD, ARCHIVED, REJECTED
+  isApproved          Boolean   @default(false) // Requires admin approval
   isFeatured          Boolean   @default(false)
   featuredUntil       DateTime?
   views               Int       @default(0)
@@ -1022,6 +1028,8 @@ model Bookmark {
 model Repost {
   id                   String       @id @default(cuid())
   sessionId            String
+  userId               String? // If user is logged in, this gives more viral boost
+  user                 User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   quoteText            String? // Optional quote/comment
   originalType         String // confession, crush, spotted
   originalConfessionId String?
@@ -1030,9 +1038,12 @@ model Repost {
   originalCrush        CampusCrush? @relation("RepostedCrushes", fields: [originalCrushId], references: [id], onDelete: Cascade)
   originalSpottedId    String?
   originalSpotted      Spotted?     @relation("RepostedSpotted", fields: [originalSpottedId], references: [id], onDelete: Cascade)
+  isVerifiedUser       Boolean      @default(false) // If reposter is a verified/registered user
+  viralBoost           Float        @default(1.0) // Multiplier for viral algorithm (verified users = 2.0)
   createdAt            DateTime     @default(now())
 
   @@index([sessionId])
+  @@index([userId])
   @@index([createdAt])
 }
 
@@ -1583,4 +1594,158 @@ model AudioComment {
   createdAt DateTime         @default(now())
 
   @@index([audioId, createdAt])
+}
+
+// ============ VIDEO POSTS (REELS/TIKTOK STYLE) ============
+
+model VideoPost {
+  id          String   @id @default(cuid())
+  videoUrl    String
+  thumbnailUrl String?
+  caption     String?
+  audioName   String?  // Music/audio track name
+  audioArtist String?
+  duration    Int      // Duration in seconds
+  width       Int?
+  height      Int?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  viewCount   Int      @default(0)
+  status      String   @default("ACTIVE") // ACTIVE, ARCHIVED, REMOVED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  likes    VideoLike[]
+  comments VideoComment[]
+  saves    VideoSave[]
+
+  @@index([userId])
+  @@index([status, createdAt])
+}
+
+model VideoLike {
+  id        String    @id @default(cuid())
+  videoId   String
+  video     VideoPost @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime  @default(now())
+
+  @@unique([videoId, userId])
+  @@index([videoId])
+  @@index([userId])
+}
+
+model VideoComment {
+  id        String    @id @default(cuid())
+  videoId   String
+  video     VideoPost @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  userId    String
+  content   String
+  createdAt DateTime  @default(now())
+
+  @@index([videoId, createdAt])
+  @@index([userId])
+}
+
+model VideoSave {
+  id        String    @id @default(cuid())
+  videoId   String
+  video     VideoPost @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime  @default(now())
+
+  @@unique([videoId, userId])
+  @@index([videoId])
+  @@index([userId])
+}
+
+// ============ ITEM SUGGESTIONS (I NEED X) ============
+
+model ItemSuggestion {
+  id          String   @id @default(cuid())
+  content     String   // What they need (e.g., "house fan", "laptop charger")
+  userId      String?  // Optional - registered users
+  user        User?    @relation(fields: [userId], references: [id])
+  sessionId   String   // For anonymous users
+  expiresAt   DateTime // 36 hours from creation by default, or permanent if user is registered
+  status      String   @default("ACTIVE") // ACTIVE, FULFILLED, EXPIRED
+  createdAt   DateTime @default(now())
+
+  responses   ItemSuggestionResponse[]
+
+  @@index([status, expiresAt])
+  @@index([userId])
+}
+
+model ItemSuggestionResponse {
+  id           String         @id @default(cuid())
+  suggestionId String
+  suggestion   ItemSuggestion @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
+  sellerId     String
+  seller       User           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  message      String?
+  listingId    String?        // Link to their listing if applicable
+  createdAt    DateTime       @default(now())
+
+  @@index([suggestionId])
+  @@index([sellerId])
+}
+
+// ============ ADMIN BROADCASTS ============
+
+model AdminBroadcast {
+  id        String    @id @default(cuid())
+  title     String
+  content   String
+  priority  String    @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+  isActive  Boolean   @default(true)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+
+  reads     BroadcastRead[]
+
+  @@index([isActive, createdAt])
+}
+
+model BroadcastRead {
+  id          String         @id @default(cuid())
+  broadcastId String
+  broadcast   AdminBroadcast @relation(fields: [broadcastId], references: [id], onDelete: Cascade)
+  sessionId   String         // Track by session for anonymous users too
+  readAt      DateTime       @default(now())
+
+  @@unique([broadcastId, sessionId])
+  @@index([broadcastId])
+}
+
+// ============ ANONYMOUS CHAT LIMITS ============
+
+model AnonymousChatLimit {
+  id           String   @id @default(cuid())
+  ipAddress    String   @unique
+  messageCount Int      @default(0)
+  lastResetAt  DateTime @default(now())
+  createdAt    DateTime @default(now())
+}
+
+// ============ CAMPUS CHAT (PUBLIC REAL-TIME CHAT) ============
+
+model CampusChatMessage {
+  id          String   @id @default(cuid())
+  content     String
+  sessionId   String
+  ipAddress   String?
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  isVerified  Boolean  @default(false)
+  isFiltered  Boolean  @default(false) // Content was auto-filtered for inappropriate words
+  avatarColor String   @default("#6366f1")
+  isDeleted   Boolean  @default(false)
+  deletedAt   DateTime?
+  deletedBy   String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([sessionId])
+  @@index([userId])
 }
