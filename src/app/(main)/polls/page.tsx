@@ -2,22 +2,36 @@
 
 import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
-import { Plus, X, MessageCircle, BarChart3, CheckCircle2 } from "lucide-react";
+import { Plus, BarChart3, CheckCircle2, Clock, Archive, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  submitPoll,
-  getActivePolls,
-  votePoll,
-  getUserVote,
-} from "@/actions/polls";
+import { Badge } from "@/components/ui/badge";
+import { getPolls, votePoll, getMyVote } from "@/actions/polls";
 import { formatRelativeTime, cn } from "@/lib/utils";
+
+const POLL_COLORS = [
+  "bg-blue-500",
+  "bg-purple-500",
+  "bg-pink-500",
+  "bg-orange-500",
+  "bg-green-500",
+  "bg-teal-500",
+];
+
+const POLL_COLORS_LIGHT = [
+  "bg-blue-100",
+  "bg-purple-100",
+  "bg-pink-100",
+  "bg-orange-100",
+  "bg-green-100",
+  "bg-teal-100",
+];
 
 interface PollOption {
   id: string;
   text: string;
+  sortOrder: number;
   voteCount: number;
 }
 
@@ -25,38 +39,37 @@ interface Poll {
   id: string;
   question: string;
   pollNumber: number | null;
+  status: string;
+  expiresAt: Date | null;
   createdAt: Date;
+  isOwner: boolean;
   options: PollOption[];
   totalVotes: number;
-  commentCount: number;
 }
+
+type FilterType = "active" | "ended" | "my";
 
 export default function PollsPage() {
   const [polls, setPolls] = useState<Poll[]>([]);
   const [loading, setLoading] = useState(true);
   const [userVotes, setUserVotes] = useState<Record<string, string | null>>({});
   const [votingPollId, setVotingPollId] = useState<string | null>(null);
+  const [animatingPollId, setAnimatingPollId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<FilterType>("active");
   const [isPending, startTransition] = useTransition();
-
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [options, setOptions] = useState(["", ""]);
-  const [submitError, setSubmitError] = useState("");
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     loadPolls();
-  }, []);
+  }, [filter]);
 
   async function loadPolls() {
     setLoading(true);
-    const result = await getActivePolls();
+    const result = await getPolls(filter);
     if (result.success && result.data) {
       setPolls(result.data.polls);
       const votes: Record<string, string | null> = {};
       for (const poll of result.data.polls) {
-        const voteResult = await getUserVote(poll.id);
+        const voteResult = await getMyVote(poll.id);
         if (voteResult.success && voteResult.data) {
           votes[poll.id] = voteResult.data.optionId;
         }
@@ -66,61 +79,12 @@ export default function PollsPage() {
     setLoading(false);
   }
 
-  function addOption() {
-    if (options.length < 6) {
-      setOptions([...options, ""]);
-    }
-  }
-
-  function removeOption(index: number) {
-    if (options.length > 2) {
-      setOptions(options.filter((_, i) => i !== index));
-    }
-  }
-
-  function updateOption(index: number, value: string) {
-    const newOptions = [...options];
-    newOptions[index] = value;
-    setOptions(newOptions);
-  }
-
-  async function handleSubmitPoll(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitError("");
-    setIsSubmitting(true);
-
-    const validOptions = options.filter((opt) => opt.trim());
-    if (!question.trim()) {
-      setSubmitError("Please enter a question");
-      setIsSubmitting(false);
-      return;
-    }
-    if (validOptions.length < 2) {
-      setSubmitError("Please provide at least 2 options");
-      setIsSubmitting(false);
-      return;
-    }
-
-    const result = await submitPoll({ question: question.trim(), options: validOptions });
-    setIsSubmitting(false);
-
-    if (result.success) {
-      setSubmitSuccess(true);
-      setQuestion("");
-      setOptions(["", ""]);
-      setShowCreateForm(false);
-      setTimeout(() => setSubmitSuccess(false), 3000);
-    } else {
-      setSubmitError(result.error || "Failed to submit poll");
-    }
-  }
-
   async function handleVote(pollId: string, optionId: string) {
     if (userVotes[pollId]) return;
     setVotingPollId(pollId);
 
     startTransition(async () => {
-      const result = await votePoll(optionId);
+      const result = await votePoll(pollId, optionId);
       if (result.success) {
         setUserVotes((prev) => ({ ...prev, [pollId]: optionId }));
         setPolls((prev) =>
@@ -139,10 +103,16 @@ export default function PollsPage() {
             return poll;
           })
         );
+        setAnimatingPollId(pollId);
+        setTimeout(() => setAnimatingPollId(null), 1000);
       }
       setVotingPollId(null);
     });
   }
+
+  const isPollExpired = (poll: Poll) => {
+    return poll.expiresAt && new Date(poll.expiresAt) <= new Date();
+  };
 
   if (loading) {
     return (
@@ -157,164 +127,175 @@ export default function PollsPage() {
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Campus Polls</h1>
-          <p className="text-gray-600">Vote on polls and see what your campus thinks!</p>
+          <p className="text-gray-600">Vote anonymously and see what campus thinks!</p>
         </div>
-        <Button onClick={() => setShowCreateForm(!showCreateForm)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Poll
-        </Button>
+        <Link href="/polls/new">
+          <Button className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+            <Plus className="h-4 w-4" />
+            Create Poll
+          </Button>
+        </Link>
       </div>
 
-      {submitSuccess && (
-        <div className="mb-6 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-4 text-green-800">
-          <CheckCircle2 className="h-5 w-5" />
-          <span>Poll submitted successfully! It will appear once approved.</span>
-        </div>
-      )}
-
-      {showCreateForm && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Create a New Poll</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmitPoll} className="space-y-4">
-              <Input
-                label="Question"
-                placeholder="What do you want to ask?"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                error={submitError && !question.trim() ? "Required" : undefined}
-              />
-
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                  Options (min 2, max 6)
-                </label>
-                <div className="space-y-2">
-                  {options.map((option, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        placeholder={`Option ${index + 1}`}
-                        value={option}
-                        onChange={(e) => updateOption(index, e.target.value)}
-                      />
-                      {options.length > 2 && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeOption(index)}
-                          className="shrink-0 px-2"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {options.length < 6 && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={addOption}
-                    className="mt-2"
-                  >
-                    <Plus className="mr-1 h-4 w-4" />
-                    Add Option
-                  </Button>
-                )}
-              </div>
-
-              {submitError && (
-                <p className="text-sm text-red-600">{submitError}</p>
-              )}
-
-              <div className="flex gap-2">
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? <Spinner size="sm" className="mr-2" /> : null}
-                  Submit Poll
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowCreateForm(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+      {/* Filter Tabs */}
+      <div className="mb-6 flex gap-2">
+        <button
+          onClick={() => setFilter("active")}
+          className={cn(
+            "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all",
+            filter === "active"
+              ? "bg-blue-100 text-blue-700 shadow-sm"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          )}
+        >
+          <BarChart3 className="h-4 w-4" />
+          Active
+        </button>
+        <button
+          onClick={() => setFilter("ended")}
+          className={cn(
+            "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all",
+            filter === "ended"
+              ? "bg-gray-700 text-white shadow-sm"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          )}
+        >
+          <Archive className="h-4 w-4" />
+          Ended
+        </button>
+        <button
+          onClick={() => setFilter("my")}
+          className={cn(
+            "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all",
+            filter === "my"
+              ? "bg-purple-100 text-purple-700 shadow-sm"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          )}
+        >
+          <User className="h-4 w-4" />
+          My Polls
+        </button>
+      </div>
 
       {polls.length === 0 ? (
         <Card className="p-8 text-center">
           <BarChart3 className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-          <h3 className="text-lg font-medium text-gray-900">No active polls</h3>
-          <p className="mt-1 text-gray-500">Be the first to create a poll!</p>
+          <h3 className="text-lg font-medium text-gray-900">
+            {filter === "active" && "No active polls"}
+            {filter === "ended" && "No ended polls"}
+            {filter === "my" && "You haven't created any polls yet"}
+          </h3>
+          <p className="mt-1 text-gray-500">
+            {filter === "my" ? "Create your first poll!" : "Be the first to create a poll!"}
+          </p>
+          {filter !== "active" && (
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => setFilter("active")}
+            >
+              View Active Polls
+            </Button>
+          )}
         </Card>
       ) : (
         <div className="space-y-6">
           {polls.map((poll) => {
             const hasVoted = !!userVotes[poll.id];
             const isVoting = votingPollId === poll.id;
+            const isAnimating = animatingPollId === poll.id;
+            const isExpired = isPollExpired(poll);
+            const canVote = !hasVoted && !isExpired && poll.status === "ACTIVE";
 
             return (
-              <Card key={poll.id}>
+              <Card
+                key={poll.id}
+                className={cn(
+                  "overflow-hidden transition-all",
+                  isAnimating && "ring-2 ring-blue-400 ring-offset-2"
+                )}
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
-                    <div>
-                      {poll.pollNumber && (
-                        <span className="text-sm font-medium text-blue-600">
-                          Poll #{poll.pollNumber}
+                    <div className="flex-1">
+                      <div className="mb-1 flex items-center gap-2">
+                        {poll.pollNumber && (
+                          <Badge variant="secondary" className="text-xs">
+                            Poll #{poll.pollNumber}
+                          </Badge>
+                        )}
+                        {poll.isOwner && (
+                          <Badge variant="outline" className="text-xs">
+                            Your Poll
+                          </Badge>
+                        )}
+                        {isExpired && (
+                          <Badge variant="error" className="text-xs">
+                            Expired
+                          </Badge>
+                        )}
+                      </div>
+                      <CardTitle className="text-lg leading-tight">{poll.question}</CardTitle>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="text-sm text-gray-500">
+                        {formatRelativeTime(poll.createdAt)}
+                      </span>
+                      {poll.expiresAt && !isExpired && (
+                        <span className="flex items-center gap-1 text-xs text-orange-600">
+                          <Clock className="h-3 w-3" />
+                          Ends {formatRelativeTime(poll.expiresAt)}
                         </span>
                       )}
-                      <CardTitle className="text-lg">{poll.question}</CardTitle>
                     </div>
-                    <span className="text-sm text-gray-500">
-                      {formatRelativeTime(poll.createdAt)}
-                    </span>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {poll.options.map((option) => {
+                    {poll.options.map((option, index) => {
                       const percentage =
                         poll.totalVotes > 0
                           ? Math.round((option.voteCount / poll.totalVotes) * 100)
                           : 0;
                       const isSelected = userVotes[poll.id] === option.id;
+                      const colorClass = POLL_COLORS[index % POLL_COLORS.length];
+                      const colorClassLight = POLL_COLORS_LIGHT[index % POLL_COLORS_LIGHT.length];
 
                       return (
                         <button
                           key={option.id}
                           onClick={() => handleVote(poll.id, option.id)}
-                          disabled={hasVoted || isVoting}
+                          disabled={!canVote || isVoting}
                           className={cn(
-                            "relative w-full overflow-hidden rounded-lg border p-3 text-left transition-all",
-                            hasVoted
-                              ? "cursor-default"
-                              : "cursor-pointer hover:border-blue-400 hover:bg-blue-50",
+                            "relative w-full overflow-hidden rounded-xl border-2 p-4 text-left transition-all duration-300",
+                            canVote
+                              ? "cursor-pointer hover:border-blue-400 hover:shadow-md active:scale-[0.99]"
+                              : "cursor-default",
                             isSelected
                               ? "border-blue-500 bg-blue-50"
                               : "border-gray-200 bg-white"
                           )}
                         >
+                          {/* Animated progress bar - only show after voting */}
                           {hasVoted && (
                             <div
                               className={cn(
-                                "absolute inset-y-0 left-0 transition-all",
-                                isSelected ? "bg-blue-200" : "bg-gray-100"
+                                "absolute inset-y-0 left-0 transition-all duration-700 ease-out",
+                                isSelected ? colorClass : colorClassLight,
+                                isSelected ? "opacity-30" : "opacity-50"
                               )}
-                              style={{ width: `${percentage}%` }}
+                              style={{
+                                width: isAnimating ? "0%" : `${percentage}%`,
+                                animation: isAnimating
+                                  ? `growWidth 700ms ease-out forwards`
+                                  : undefined,
+                              }}
                             />
                           )}
                           <div className="relative flex items-center justify-between">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-3">
                               {isSelected && (
-                                <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                                <CheckCircle2 className="h-5 w-5 shrink-0 text-blue-600" />
                               )}
                               <span
                                 className={cn(
@@ -326,9 +307,19 @@ export default function PollsPage() {
                               </span>
                             </div>
                             {hasVoted && (
-                              <span className="text-sm font-medium text-gray-600">
-                                {percentage}% ({option.voteCount})
-                              </span>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={cn(
+                                    "text-lg font-bold tabular-nums",
+                                    isSelected ? "text-blue-600" : "text-gray-600"
+                                  )}
+                                >
+                                  {percentage}%
+                                </span>
+                                <span className="text-sm text-gray-500">
+                                  ({option.voteCount})
+                                </span>
+                              </div>
                             )}
                           </div>
                         </button>
@@ -336,14 +327,16 @@ export default function PollsPage() {
                     })}
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
-                    <span>{poll.totalVotes} vote{poll.totalVotes !== 1 ? "s" : ""}</span>
+                  <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3">
+                    <span className="flex items-center gap-2 text-gray-600">
+                      <BarChart3 className="h-4 w-4" />
+                      {poll.totalVotes} vote{poll.totalVotes !== 1 ? "s" : ""}
+                    </span>
                     <Link
                       href={`/polls/${poll.id}`}
-                      className="flex items-center gap-1 text-blue-600 hover:underline"
+                      className="text-sm font-medium text-blue-600 hover:underline"
                     >
-                      <MessageCircle className="h-4 w-4" />
-                      {poll.commentCount} comment{poll.commentCount !== 1 ? "s" : ""}
+                      View Details →
                     </Link>
                   </div>
                 </CardContent>
@@ -352,6 +345,14 @@ export default function PollsPage() {
           })}
         </div>
       )}
+
+      <style jsx>{`
+        @keyframes growWidth {
+          from {
+            width: 0%;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -1179,7 +1179,7 @@ model DatingProfile {
   bio         String?
   age         Int
   gender      String // MALE, FEMALE, NON_BINARY, OTHER
-  lookingFor  String[] // Array of genders they're interested in
+  lookingFor  String // JSON array of genders they're interested in
 
   // Academic Info
   course      String?
@@ -1187,7 +1187,7 @@ model DatingProfile {
   faculty     String?
 
   // Interests & Lifestyle
-  interests        String[] // Array of interest tags
+  interests        String // JSON array of interest tags
   height           String? // e.g., "5'10" or "178cm"
   relationshipGoal String? // RELATIONSHIP, CASUAL, FRIENDS, NOT_SURE
 
@@ -1313,4 +1313,274 @@ model DatingBlock {
   createdAt DateTime      @default(now())
 
   @@unique([blockerId, blockedId])
+}
+
+// ============ CAMPUS MEMES ============
+
+model Meme {
+  id          String   @id @default(cuid())
+  title       String?
+  imageUrl    String
+  caption     String?
+  sessionId   String
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  memeNumber  Int?     // Auto-assigned for approved memes
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  reactions MemeReaction[]
+  comments  MemeComment[]
+
+  @@index([status, createdAt])
+}
+
+model MemeReaction {
+  id        String   @id @default(cuid())
+  memeId    String
+  meme      Meme     @relation(fields: [memeId], references: [id], onDelete: Cascade)
+  sessionId String
+  emoji     String   // 😂 🔥 💀 😭 etc
+  createdAt DateTime @default(now())
+
+  @@unique([memeId, sessionId, emoji])
+  @@index([memeId])
+}
+
+model MemeComment {
+  id        String   @id @default(cuid())
+  memeId    String
+  meme      Meme     @relation(fields: [memeId], references: [id], onDelete: Cascade)
+  content   String
+  sessionId String
+  createdAt DateTime @default(now())
+
+  @@index([memeId, createdAt])
+}
+
+// ============ TWO TRUTHS ONE LIE ============
+
+model TwoTruthsOneLie {
+  id          String   @id @default(cuid())
+  statement1  String
+  statement2  String
+  statement3  String
+  lieIndex    Int      // 1, 2, or 3 - which one is the lie
+  sessionId   String
+  status      String   @default("ACTIVE") // ACTIVE, ENDED
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  guesses TwoTruthsGuess[]
+
+  @@index([status, expiresAt])
+}
+
+model TwoTruthsGuess {
+  id        String           @id @default(cuid())
+  gameId    String
+  game      TwoTruthsOneLie  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  sessionId String
+  guessedIndex Int           // 1, 2, or 3 - which one they think is the lie
+  isCorrect Boolean
+  createdAt DateTime         @default(now())
+
+  @@unique([gameId, sessionId])
+  @@index([gameId])
+}
+
+// ============ ANONYMOUS POLLS ============
+
+model AnonPoll {
+  id          String   @id @default(cuid())
+  question    String
+  sessionId   String
+  status      String   @default("ACTIVE") // ACTIVE, ENDED
+  pollNumber  Int?
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+
+  options AnonPollOption[]
+  votes   AnonPollVote[]
+
+  @@index([status, createdAt])
+}
+
+model AnonPollOption {
+  id        String   @id @default(cuid())
+  pollId    String
+  poll      AnonPoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  text      String
+  sortOrder Int      @default(0)
+
+  votes AnonPollVote[]
+
+  @@index([pollId])
+}
+
+model AnonPollVote {
+  id        String         @id @default(cuid())
+  pollId    String
+  poll      AnonPoll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  optionId  String
+  option    AnonPollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  sessionId String
+  createdAt DateTime       @default(now())
+
+  @@unique([pollId, sessionId])
+  @@index([pollId])
+  @@index([optionId])
+}
+
+// ============ SECRET COMPLIMENTS ============
+
+model SecretCompliment {
+  id            String   @id @default(cuid())
+  recipientName String   // Name or description of person
+  recipientHint String?  // Optional hint like "Studies CS", "Lives in dorm X"
+  message       String
+  sessionId     String
+  status        String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  complimentNumber Int?
+  createdAt     DateTime @default(now())
+
+  reactions ComplimentReaction[]
+
+  @@index([status, createdAt])
+}
+
+model ComplimentReaction {
+  id           String           @id @default(cuid())
+  complimentId String
+  compliment   SecretCompliment @relation(fields: [complimentId], references: [id], onDelete: Cascade)
+  sessionId    String
+  emoji        String
+  createdAt    DateTime         @default(now())
+
+  @@unique([complimentId, sessionId, emoji])
+  @@index([complimentId])
+}
+
+// ============ STORIES (24HR POSTS) ============
+
+model Story {
+  id        String   @id @default(cuid())
+  content   String?
+  mediaUrl  String?
+  mediaType String?  // image, video
+  sessionId String
+  viewCount Int      @default(0)
+  expiresAt DateTime // 24 hours from creation
+  createdAt DateTime @default(now())
+
+  reactions StoryReaction[]
+  views     StoryView[]
+
+  @@index([expiresAt])
+  @@index([createdAt])
+}
+
+model StoryView {
+  id        String   @id @default(cuid())
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  sessionId String
+  createdAt DateTime @default(now())
+
+  @@unique([storyId, sessionId])
+  @@index([storyId])
+}
+
+model StoryReaction {
+  id        String   @id @default(cuid())
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  sessionId String
+  emoji     String
+  createdAt DateTime @default(now())
+
+  @@unique([storyId, sessionId, emoji])
+  @@index([storyId])
+}
+
+// ============ HOT TAKES / UNPOPULAR OPINIONS ============
+
+model HotTake {
+  id          String   @id @default(cuid())
+  content     String
+  sessionId   String
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  takeNumber  Int?
+  agreeCount  Int      @default(0)
+  disagreeCount Int    @default(0)
+  createdAt   DateTime @default(now())
+
+  votes    HotTakeVote[]
+  comments HotTakeComment[]
+
+  @@index([status, createdAt])
+}
+
+model HotTakeVote {
+  id        String   @id @default(cuid())
+  hotTakeId String
+  hotTake   HotTake  @relation(fields: [hotTakeId], references: [id], onDelete: Cascade)
+  sessionId String
+  voteType  String   // AGREE, DISAGREE
+  createdAt DateTime @default(now())
+
+  @@unique([hotTakeId, sessionId])
+  @@index([hotTakeId])
+}
+
+model HotTakeComment {
+  id        String   @id @default(cuid())
+  hotTakeId String
+  hotTake   HotTake  @relation(fields: [hotTakeId], references: [id], onDelete: Cascade)
+  content   String
+  sessionId String
+  createdAt DateTime @default(now())
+
+  @@index([hotTakeId, createdAt])
+}
+
+// ============ AUDIO CONFESSIONS ============
+
+model AudioConfession {
+  id           String   @id @default(cuid())
+  audioUrl     String
+  duration     Int      // seconds
+  transcript   String?  // optional transcription
+  sessionId    String
+  status       String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  audioNumber  Int?
+  playCount    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  reactions AudioReaction[]
+  comments  AudioComment[]
+
+  @@index([status, createdAt])
+}
+
+model AudioReaction {
+  id        String           @id @default(cuid())
+  audioId   String
+  audio     AudioConfession  @relation(fields: [audioId], references: [id], onDelete: Cascade)
+  sessionId String
+  emoji     String
+  createdAt DateTime         @default(now())
+
+  @@unique([audioId, sessionId, emoji])
+  @@index([audioId])
+}
+
+model AudioComment {
+  id        String           @id @default(cuid())
+  audioId   String
+  audio     AudioConfession  @relation(fields: [audioId], references: [id], onDelete: Cascade)
+  content   String
+  sessionId String
+  createdAt DateTime         @default(now())
+
+  @@index([audioId, createdAt])
 }

@@ -20,6 +20,12 @@ import {
   LayoutDashboard,
   Bell,
   User,
+  Smile,
+  Gamepad2,
+  Sparkles,
+  Flame,
+  Mic,
+  Clock,
 } from "lucide-react";
 
 interface SocialMenuProps {
@@ -52,7 +58,13 @@ const mainItems: MenuItem[] = [
 ];
 
 const communityItems: MenuItem[] = [
+  { href: "/memes", icon: Smile, label: "Memes", shortLabel: "Memes" },
+  { href: "/games", icon: Gamepad2, label: "Games", shortLabel: "Games" },
   { href: "/polls", icon: BarChart3, label: "Polls", shortLabel: "Polls" },
+  { href: "/compliments", icon: Sparkles, label: "Compliments", shortLabel: "💕" },
+  { href: "/stories", icon: Clock, label: "Stories", shortLabel: "Stories" },
+  { href: "/hot-takes", icon: Flame, label: "Hot Takes", shortLabel: "🔥" },
+  { href: "/audio", icon: Mic, label: "Voice Notes", shortLabel: "Voice" },
   { href: "/events", icon: Calendar, label: "Events", shortLabel: "Events" },
   { href: "/study-groups", icon: GraduationCap, label: "Study Groups", shortLabel: "Study" },
   { href: "/courses", icon: BookOpen, label: "Course Reviews", shortLabel: "Courses" },
