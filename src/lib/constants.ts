@@ -65,7 +65,7 @@ export const ACCEPTED_IMAGE_TYPES = [
 export const CATEGORY_ICONS: Record<string, string> = {
   // Parent categories
   "Clothes": "👕",
-  "Electronics": "📱",
+  "Electronics": "🔌",
   // Clothes subcategories
   "Men Wear": "👔",
   "Women Wear": "👗",
@@ -82,6 +82,36 @@ export const CATEGORY_ICONS: Record<string, string> = {
   "Laptops": "💻",
   "Phones": "📱",
   "Other Electronics": "🔌",
+};
+
+// Quick category pills for hero section
+export const QUICK_CATEGORIES = [
+  { name: "Electronics", icon: "🔌", color: "from-blue-500 to-cyan-500" },
+  { name: "Clothes", icon: "👕", color: "from-pink-500 to-rose-500" },
+  { name: "Laptops", icon: "💻", color: "from-purple-500 to-indigo-500" },
+  { name: "Phones", icon: "📱", color: "from-green-500 to-emerald-500" },
+  { name: "Shoes", icon: "👟", color: "from-orange-500 to-amber-500" },
+  { name: "Bags", icon: "👜", color: "from-fuchsia-500 to-pink-500" },
+] as const;
+
+// Category colors for cards
+export const CATEGORY_COLORS: Record<string, string> = {
+  "Clothes": "from-pink-500 to-rose-500",
+  "Electronics": "from-blue-500 to-cyan-500",
+  "Men Wear": "from-indigo-500 to-blue-500",
+  "Women Wear": "from-pink-500 to-fuchsia-500",
+  "Shoes": "from-orange-500 to-amber-500",
+  "Bags": "from-purple-500 to-violet-500",
+  "TV": "from-slate-600 to-slate-800",
+  "Speaker System": "from-red-500 to-orange-500",
+  "Fan": "from-cyan-500 to-teal-500",
+  "Microwave": "from-amber-500 to-yellow-500",
+  "Refrigerator": "from-blue-400 to-blue-600",
+  "Cooker": "from-orange-600 to-red-500",
+  "Water Heater": "from-sky-400 to-blue-500",
+  "Laptops": "from-gray-600 to-gray-800",
+  "Phones": "from-green-500 to-emerald-500",
+  "Other Electronics": "from-violet-500 to-purple-500",
 };
 
 // Types

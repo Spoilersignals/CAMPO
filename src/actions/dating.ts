@@ -10,11 +10,11 @@ export type DatingProfileData = {
   bio?: string;
   age: number;
   gender: string;
-  lookingFor: string[];
+  lookingFor: string[]; // Will be JSON-serialized for SQLite
   course?: string;
   yearOfStudy?: number;
   faculty?: string;
-  interests: string[];
+  interests: string[]; // Will be JSON-serialized for SQLite
   height?: string;
   relationshipGoal?: string;
   instagramHandle?: string;
@@ -71,15 +71,22 @@ export async function upsertDatingProfile(data: DatingProfileData) {
   if (data.prompt2Answer) completeness += 10;
   if (data.relationshipGoal) completeness += 5;
 
+  // Serialize arrays to JSON for SQLite compatibility
+  const dbData = {
+    ...data,
+    lookingFor: JSON.stringify(data.lookingFor || []),
+    interests: JSON.stringify(data.interests || []),
+  };
+
   const profile = await prisma.datingProfile.upsert({
     where: { userId: session.user.id },
     create: {
       userId: session.user.id,
-      ...data,
+      ...dbData,
       profileCompleteness: Math.min(completeness, 100),
     },
     update: {
-      ...data,
+      ...dbData,
       profileCompleteness: Math.min(completeness, 100),
     },
   });
@@ -209,21 +216,32 @@ export async function getDiscoveryProfiles(limit: number = 10) {
     ...myProfile.blockedBy.map((b) => b.blockerId),
   ];
 
-  const profiles = await prisma.datingProfile.findMany({
+  // Parse my lookingFor preferences from JSON
+  const myLookingFor: string[] = JSON.parse(myProfile.lookingFor || '[]');
+
+  // Get all eligible profiles and filter in-memory (SQLite doesn't support array ops)
+  const allProfiles = await prisma.datingProfile.findMany({
     where: {
       id: { notIn: excludeIds },
       isActive: true,
       showMe: true,
-      gender: { in: myProfile.lookingFor },
-      lookingFor: { has: myProfile.gender },
       age: { gte: myProfile.minAge, lte: myProfile.maxAge },
     },
     include: {
       photos: { orderBy: { sortOrder: "asc" } },
     },
-    take: limit,
     orderBy: [{ profileCompleteness: "desc" }, { createdAt: "desc" }],
   });
+
+  // Filter by gender preferences (comparing JSON strings)
+  const profiles = allProfiles.filter(profile => {
+    // Check if I'm looking for their gender
+    if (!myLookingFor.includes(profile.gender)) return false;
+    // Check if they're looking for my gender
+    const theirLookingFor: string[] = JSON.parse(profile.lookingFor || '[]');
+    if (!theirLookingFor.includes(myProfile.gender)) return false;
+    return true;
+  }).slice(0, limit);
 
   return { success: true, data: profiles };
 }

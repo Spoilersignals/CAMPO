@@ -12,17 +12,17 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { getMyDatingProfile, upsertDatingProfile, addDatingPhoto, deleteDatingPhoto, toggleProfileVisibility } from "@/actions/dating";
 
-type DatingProfile = {
+type DatingProfileRaw = {
   id: string;
   displayName: string;
   bio: string | null;
   age: number;
   gender: string;
-  lookingFor: string[];
+  lookingFor: string; // JSON string from DB
   course: string | null;
   yearOfStudy: number | null;
   faculty: string | null;
-  interests: string[];
+  interests: string; // JSON string from DB
   height: string | null;
   relationshipGoal: string | null;
   instagramHandle: string | null;
@@ -38,6 +38,19 @@ type DatingProfile = {
   photos: { id: string; url: string; isMain: boolean }[];
 };
 
+type DatingProfile = Omit<DatingProfileRaw, 'interests' | 'lookingFor'> & {
+  interests: string[];
+  lookingFor: string[];
+};
+
+function parseProfile(raw: DatingProfileRaw): DatingProfile {
+  return {
+    ...raw,
+    interests: typeof raw.interests === 'string' ? JSON.parse(raw.interests || '[]') : [],
+    lookingFor: typeof raw.lookingFor === 'string' ? JSON.parse(raw.lookingFor || '[]') : [],
+  };
+}
+
 export default function DatingProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<DatingProfile | null>(null);
@@ -52,7 +65,8 @@ export default function DatingProfilePage() {
   async function loadProfile() {
     const result = await getMyDatingProfile();
     if (result.success && result.data) {
-      setProfile(result.data);
+      const parsed = parseProfile(result.data as unknown as DatingProfileRaw);
+      setProfile(parsed);
       setEditedBio(result.data.bio || "");
     } else {
       router.push("/dating/profile/setup");

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionId } from "@/lib/session";
 import { generateShareCode } from "@/lib/share-code";
 import { notifyAdminsOfPendingConfession } from "@/lib/notifications";
+import { moderateContent } from "@/lib/content-moderation";
 
 type ActionResult<T = undefined> = {
   success: boolean;
@@ -147,6 +148,11 @@ export async function sendPersonalConfession(
 
     if (content.length > 2000) {
       return { success: false, error: "Message must be less than 2000 characters" };
+    }
+
+    const moderationResult = moderateContent(content);
+    if (!moderationResult.isAllowed) {
+      return { success: false, error: moderationResult.reason };
     }
 
     const link = await prisma.personalLink.findUnique({

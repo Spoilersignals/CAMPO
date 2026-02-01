@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getDiscoveryProfiles, getMyDatingProfile, swipeProfile, getBrowseProfiles } from "@/actions/dating";
 
-type DatingProfile = {
+type DatingProfileRaw = {
   id: string;
   displayName: string;
   bio: string | null;
@@ -19,7 +19,7 @@ type DatingProfile = {
   course: string | null;
   yearOfStudy: number | null;
   faculty: string | null;
-  interests: string[];
+  interests: string; // JSON string from DB
   height: string | null;
   relationshipGoal: string | null;
   instagramHandle: string | null;
@@ -31,6 +31,17 @@ type DatingProfile = {
   prompt3Answer: string | null;
   photos: { id: string; url: string; isMain: boolean }[];
 };
+
+type DatingProfile = Omit<DatingProfileRaw, 'interests'> & {
+  interests: string[];
+};
+
+function parseProfile(raw: DatingProfileRaw): DatingProfile {
+  return {
+    ...raw,
+    interests: typeof raw.interests === 'string' ? JSON.parse(raw.interests || '[]') : raw.interests,
+  };
+}
 
 export default function DatingPage() {
   const router = useRouter();
@@ -61,7 +72,7 @@ export default function DatingPage() {
       setIsGuest(true);
       const browseResult = await getBrowseProfiles(20);
       if (browseResult.success && browseResult.data) {
-        setProfiles(browseResult.data);
+        setProfiles((browseResult.data as DatingProfileRaw[]).map(parseProfile));
       }
       setIsLoading(false);
       return;
@@ -78,7 +89,7 @@ export default function DatingPage() {
     // Load discovery profiles
     const result = await getDiscoveryProfiles(20);
     if (result.success && result.data) {
-      setProfiles(result.data);
+      setProfiles((result.data as DatingProfileRaw[]).map(parseProfile));
     } else if (result.needsProfile) {
       setHasProfile(false);
     }
@@ -119,7 +130,7 @@ export default function DatingPage() {
       if (currentIndex >= profiles.length - 3) {
         const moreProfiles = await getDiscoveryProfiles(10);
         if (moreProfiles.success && moreProfiles.data) {
-          setProfiles(prev => [...prev, ...moreProfiles.data!]);
+          setProfiles(prev => [...prev, ...(moreProfiles.data as DatingProfileRaw[]).map(parseProfile)]);
         }
       }
     }, 300);

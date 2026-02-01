@@ -247,12 +247,13 @@ export async function searchCompliments(query: string): Promise<
       return { success: true, data: { compliments: [] } };
     }
 
+    // SQLite doesn't support mode: "insensitive", use contains (SQLite LIKE is case-insensitive by default)
     const compliments = await prisma.secretCompliment.findMany({
       where: {
         status: "APPROVED",
         OR: [
-          { recipientName: { contains: query.trim(), mode: "insensitive" } },
-          { recipientHint: { contains: query.trim(), mode: "insensitive" } },
+          { recipientName: { contains: query.trim() } },
+          { recipientHint: { contains: query.trim() } },
         ],
       },
       orderBy: { createdAt: "desc" },
