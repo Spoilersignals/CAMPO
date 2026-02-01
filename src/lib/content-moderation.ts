@@ -1,5 +1,3 @@
-"use server";
-
 // List of blocked patterns for Instagram-like guidelines
 const BLOCKED_PATTERNS = {
   // Hate speech patterns
