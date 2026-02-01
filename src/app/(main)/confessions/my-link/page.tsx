@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Copy, Check, Link2, MessageCircle, RefreshCw, Share2, Sparkles, Instagram, Download, MoreVertical } from "lucide-react";
+import { Copy, Check, Link2, MessageCircle, RefreshCw, Share2, Sparkles, Instagram, Download, MoreVertical, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,8 @@ import {
   generatePersonalLink, 
   getMyPersonalLink, 
   shareToStories,
-  updateDisplayName 
+  updateDisplayName,
+  updatePersonalLinkCode 
 } from "@/actions/personal-confessions";
 import { formatRelativeTime } from "@/lib/utils";
 
@@ -163,6 +164,7 @@ type PersonalConfession = {
 
 export default function MyLinkPage() {
   const [link, setLink] = useState<string | null>(null);
+  const [linkCode, setLinkCode] = useState<string>("");
   const [confessions, setConfessions] = useState<PersonalConfession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -172,6 +174,11 @@ export default function MyLinkPage() {
   const [isSavingName, setIsSavingName] = useState(false);
   const [activeShareMenu, setActiveShareMenu] = useState<string | null>(null);
   const shareMenuRef = useRef<HTMLDivElement>(null);
+  
+  const [isEditingCode, setIsEditingCode] = useState(false);
+  const [editCodeValue, setEditCodeValue] = useState("");
+  const [codeError, setCodeError] = useState<string | null>(null);
+  const [isSavingCode, setIsSavingCode] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -288,6 +295,7 @@ export default function MyLinkPage() {
     const result = await getMyPersonalLink();
     if (result.success && result.data) {
       setLink(result.data.link);
+      setLinkCode(result.data.code || "");
       setConfessions(result.data.confessions);
     }
     setIsLoading(false);
@@ -324,6 +332,58 @@ export default function MyLinkPage() {
     setIsSavingName(true);
     await updateDisplayName(displayName);
     setIsSavingName(false);
+  }
+
+  function validateCode(code: string): string | null {
+    if (code.length < 3 || code.length > 20) {
+      return "Code must be 3-20 characters";
+    }
+    if (!/^[a-z0-9_]+$/.test(code)) {
+      return "Only lowercase letters, numbers, and underscores allowed";
+    }
+    return null;
+  }
+
+  function handleCodeInputChange(value: string) {
+    const lowercased = value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+    setEditCodeValue(lowercased);
+    if (lowercased.length > 0) {
+      setCodeError(validateCode(lowercased));
+    } else {
+      setCodeError(null);
+    }
+  }
+
+  async function handleSaveCode() {
+    const error = validateCode(editCodeValue);
+    if (error) {
+      setCodeError(error);
+      return;
+    }
+
+    setIsSavingCode(true);
+    setCodeError(null);
+    const result = await updatePersonalLinkCode(editCodeValue);
+    if (result.success) {
+      setLink(editCodeValue);
+      setLinkCode(editCodeValue);
+      setIsEditingCode(false);
+    } else {
+      setCodeError(result.error || "Failed to update code");
+    }
+    setIsSavingCode(false);
+  }
+
+  function handleStartEditCode() {
+    setEditCodeValue(linkCode);
+    setCodeError(null);
+    setIsEditingCode(true);
+  }
+
+  function handleCancelEditCode() {
+    setIsEditingCode(false);
+    setEditCodeValue("");
+    setCodeError(null);
   }
 
   if (isLoading) {
@@ -381,6 +441,66 @@ export default function MyLinkPage() {
               <p className="text-sm text-indigo-700">
                 Share this link on Instagram, WhatsApp, Twitter, or anywhere! Anyone with this link can send you anonymous messages.
               </p>
+
+              {/* Custom Link Code */}
+              <div className="border-t border-indigo-200 pt-4">
+                <label className="mb-2 block text-sm font-medium text-indigo-900">
+                  Custom Link URL
+                </label>
+                {isEditingCode ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center rounded-lg border border-indigo-200 bg-white px-3 py-2 flex-1">
+                        <span className="text-sm text-gray-500 mr-1">/u/</span>
+                        <input
+                          type="text"
+                          value={editCodeValue}
+                          onChange={(e) => handleCodeInputChange(e.target.value)}
+                          className="flex-1 bg-transparent text-sm text-indigo-700 outline-none"
+                          placeholder="your_custom_code"
+                          maxLength={20}
+                        />
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={handleSaveCode}
+                        disabled={isSavingCode || !!codeError}
+                        className="bg-indigo-600 hover:bg-indigo-700"
+                      >
+                        {isSavingCode ? "Saving..." : "Save"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleCancelEditCode}
+                        disabled={isSavingCode}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {codeError && (
+                      <p className="text-sm text-red-600">{codeError}</p>
+                    )}
+                    <p className="text-xs text-gray-500">
+                      3-20 characters, lowercase letters, numbers, and underscores only
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 rounded-lg border border-indigo-200 bg-white px-4 py-2">
+                      <code className="text-sm text-indigo-700">/u/{linkCode}</code>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleStartEditCode}
+                      className="text-indigo-600 hover:text-indigo-700"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
 
               {/* Optional Display Name */}
               <div className="border-t border-indigo-200 pt-4">

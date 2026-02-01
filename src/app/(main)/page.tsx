@@ -10,6 +10,12 @@ import {
   Share2,
   Repeat2,
   ExternalLink,
+  Shield,
+  Sparkles,
+  Users,
+  Zap,
+  Lock,
+  TrendingUp,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatDistanceToNow } from "date-fns";
@@ -30,6 +36,13 @@ type FeedItem = {
   linkUrl?: string | null;
   linkTitle?: string | null;
   linkImage?: string | null;
+};
+
+type Stats = {
+  confessions: number;
+  crushes: number;
+  spotted: number;
+  total: number;
 };
 
 async function getFeedItems(): Promise<FeedItem[]> {
@@ -108,6 +121,21 @@ async function getFeedItems(): Promise<FeedItem[]> {
   return feedItems
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, 30);
+}
+
+async function getStats(): Promise<Stats> {
+  const [confessions, crushes, spotted] = await Promise.all([
+    prisma.confession.count({ where: { status: "APPROVED" } }),
+    prisma.campusCrush.count({ where: { status: "APPROVED" } }),
+    prisma.spotted.count({ where: { status: "APPROVED" } }),
+  ]);
+
+  return {
+    confessions,
+    crushes,
+    spotted,
+    total: confessions + crushes + spotted,
+  };
 }
 
 function getTypeConfig(type: FeedItem["type"]) {
@@ -280,6 +308,33 @@ function FeedCard({ item, index }: { item: FeedItem; index: number }) {
   );
 }
 
+function StatCard({
+  value,
+  label,
+  icon: Icon,
+  gradient,
+  delay,
+}: {
+  value: number;
+  label: string;
+  icon: React.ElementType;
+  gradient: string;
+  delay: number;
+}) {
+  return (
+    <div
+      className="animate-countUp opacity-0 flex flex-col items-center gap-1 rounded-2xl glass p-4 text-center"
+      style={{ animationDelay: `${delay}ms`, animationFillMode: "forwards" }}
+    >
+      <div className={`rounded-full p-2 ${gradient}`}>
+        <Icon className="h-5 w-5 text-white" />
+      </div>
+      <span className="text-2xl font-bold text-white">{value.toLocaleString()}</span>
+      <span className="text-xs text-white/70">{label}</span>
+    </div>
+  );
+}
+
 const tabs = [
   { id: "foryou", label: "For You", href: "/" },
   { id: "confessions", label: "Confessions", href: "/confessions" },
@@ -288,29 +343,112 @@ const tabs = [
 ];
 
 export default async function HomePage() {
-  const feedItems = await getFeedItems();
+  const [feedItems, stats] = await Promise.all([getFeedItems(), getStats()]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-2xl">
-        {/* Hero Section - Compact */}
-        <section className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 px-4 py-8 text-white sm:px-6">
-          <div className="text-center">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm backdrop-blur-sm">
-              <MessageCircle className="h-4 w-4" />
-              <span>Anonymous & Safe</span>
+        {/* Enhanced Hero Section */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 animate-gradient px-4 py-12 text-white sm:px-6">
+          {/* Decorative floating elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -top-4 -left-4 h-24 w-24 rounded-full bg-pink-500/20 blur-2xl animate-float" />
+            <div className="absolute top-1/4 right-0 h-32 w-32 rounded-full bg-yellow-500/20 blur-2xl animate-float-delayed" />
+            <div className="absolute bottom-0 left-1/4 h-28 w-28 rounded-full bg-blue-500/20 blur-2xl animate-float-slow" />
+            
+            {/* Floating icons */}
+            <div className="absolute top-8 right-8 animate-float opacity-20">
+              <Heart className="h-8 w-8" />
             </div>
-            <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl">
-              ComradeZone
-            </h1>
-            <p className="text-sm text-indigo-100 sm:text-base">
-              Share confessions, find your crush, spot moments on campus
-            </p>
+            <div className="absolute bottom-12 left-8 animate-float-delayed opacity-20">
+              <MessageSquare className="h-6 w-6" />
+            </div>
+            <div className="absolute top-1/2 right-12 animate-float-slow opacity-20">
+              <Eye className="h-7 w-7" />
+            </div>
+            <div className="absolute top-16 left-1/4 animate-sparkle opacity-30">
+              <Sparkles className="h-5 w-5" />
+            </div>
           </div>
+
+          <div className="relative z-10 text-center">
+            {/* Trust badges */}
+            <div className="mb-6 flex flex-wrap justify-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1.5 text-xs font-medium">
+                <Shield className="h-3.5 w-3.5" />
+                100% Anonymous
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1.5 text-xs font-medium">
+                <Lock className="h-3.5 w-3.5" />
+                No Login Required
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full glass px-3 py-1.5 text-xs font-medium">
+                <Zap className="h-3.5 w-3.5" />
+                Instant Post
+              </span>
+            </div>
+
+            <h1 className="animate-slideUp mb-3 text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl">
+              <span className="gradient-text">Your Campus,</span>
+              <br />
+              <span className="text-white">Uncensored</span>
+            </h1>
+            
+            <p className="animate-slideUp mx-auto mb-6 max-w-md text-base text-purple-100 sm:text-lg" style={{ animationDelay: "100ms" }}>
+              Speak your truth. Share your secrets. Find your crush.
+              <span className="block mt-1 text-sm text-purple-200/80">All completely anonymous.</span>
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="animate-slideUp flex flex-wrap justify-center gap-3" style={{ animationDelay: "200ms" }}>
+              <Link
+                href="/confessions/new"
+                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-white px-6 py-3 text-sm font-semibold text-purple-700 shadow-lg transition-all hover:shadow-xl hover:scale-105"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 opacity-0 transition-opacity group-hover:opacity-10" />
+                <MessageSquare className="h-4 w-4" />
+                Make a Confession
+              </Link>
+              <Link
+                href="/crushes/new"
+                className="inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white/20 hover:scale-105"
+              >
+                <Heart className="h-4 w-4" />
+                Post a Crush
+              </Link>
+            </div>
+          </div>
+
+          {/* Statistics Banner */}
+          {stats.total > 0 && (
+            <div className="relative z-10 mt-10 grid grid-cols-3 gap-3">
+              <StatCard
+                value={stats.confessions}
+                label="Confessions"
+                icon={MessageSquare}
+                gradient="bg-gradient-to-br from-purple-500 to-purple-700"
+                delay={300}
+              />
+              <StatCard
+                value={stats.crushes}
+                label="Crushes"
+                icon={Heart}
+                gradient="bg-gradient-to-br from-pink-500 to-rose-600"
+                delay={400}
+              />
+              <StatCard
+                value={stats.spotted}
+                label="Spotted"
+                icon={Eye}
+                gradient="bg-gradient-to-br from-amber-500 to-orange-600"
+                delay={500}
+              />
+            </div>
+          )}
         </section>
 
         {/* Navigation Tabs */}
-        <nav className="sticky top-0 z-10 border-b border-gray-200 bg-white">
+        <nav className="sticky top-0 z-10 border-b border-gray-200 bg-white shadow-sm">
           <div className="flex">
             {tabs.map((tab) => (
               <Link
@@ -318,8 +456,8 @@ export default async function HomePage() {
                 href={tab.href}
                 className={`flex-1 border-b-2 px-4 py-3 text-center text-sm font-medium transition-colors ${
                   tab.id === "foryou"
-                    ? "border-indigo-600 text-indigo-600"
-                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                    ? "border-purple-600 text-purple-600 bg-purple-50/50"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 hover:bg-gray-50"
                 }`}
               >
                 {tab.label}
@@ -328,36 +466,50 @@ export default async function HomePage() {
           </div>
         </nav>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-3 gap-3 border-b border-gray-200 bg-white p-4">
+        {/* Enhanced Quick Actions */}
+        <div className="grid grid-cols-3 gap-3 border-b border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4">
           <Link
             href="/confessions/new"
-            className="flex flex-col items-center gap-2 rounded-xl border border-purple-100 bg-purple-50 p-3 transition-all hover:border-purple-200 hover:shadow-md hover:scale-105"
+            className="feature-card group flex flex-col items-center gap-2 rounded-2xl border border-purple-100 bg-gradient-to-br from-purple-50 to-white p-4 shadow-sm hover:shadow-lg hover:border-purple-200"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-600">
-              <MessageSquare className="h-5 w-5 text-white" />
+            <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 shadow-md group-hover:shadow-purple-300 transition-shadow">
+              <MessageSquare className="h-6 w-6 text-white" />
+              <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-400 border-2 border-white animate-pulse" />
             </div>
-            <span className="text-xs font-medium text-purple-700">Confess</span>
+            <span className="text-sm font-semibold text-purple-700">Confess</span>
+            <span className="text-[10px] text-purple-500">Share secrets</span>
           </Link>
           <Link
             href="/dating"
-            className="flex flex-col items-center gap-2 rounded-xl border border-pink-100 bg-pink-50 p-3 transition-all hover:border-pink-200 hover:shadow-md hover:scale-105"
+            className="feature-card group flex flex-col items-center gap-2 rounded-2xl border border-pink-100 bg-gradient-to-br from-pink-50 to-white p-4 shadow-sm hover:shadow-lg hover:border-pink-200"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-rose-500">
-              <Heart className="h-5 w-5 text-white" />
+            <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 shadow-md group-hover:shadow-pink-300 transition-shadow">
+              <Heart className="h-6 w-6 text-white" />
+              <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-yellow-400 animate-pulse" />
             </div>
-            <span className="text-xs font-medium text-pink-700">Tinder</span>
+            <span className="text-sm font-semibold text-pink-700">Tinder</span>
+            <span className="text-[10px] text-pink-500">Find matches</span>
           </Link>
           <Link
             href="/spotted/new"
-            className="flex flex-col items-center gap-2 rounded-xl border border-amber-100 bg-amber-50 p-3 transition-all hover:border-amber-200 hover:shadow-md hover:scale-105"
+            className="feature-card group flex flex-col items-center gap-2 rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-white p-4 shadow-sm hover:shadow-lg hover:border-amber-200"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600">
-              <Eye className="h-5 w-5 text-white" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-md group-hover:shadow-amber-300 transition-shadow">
+              <Eye className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xs font-medium text-amber-700">Spotted</span>
+            <span className="text-sm font-semibold text-amber-700">Spotted</span>
+            <span className="text-[10px] text-amber-500">Share moments</span>
           </Link>
         </div>
+
+        {/* Trending indicator */}
+        {feedItems.length > 0 && (
+          <div className="flex items-center gap-2 bg-gradient-to-r from-purple-50 via-white to-pink-50 px-4 py-2 border-b border-gray-100">
+            <TrendingUp className="h-4 w-4 text-purple-600" />
+            <span className="text-xs font-medium text-gray-600">Latest from your campus</span>
+            <span className="ml-auto text-xs text-gray-400">{feedItems.length} posts</span>
+          </div>
+        )}
 
         {/* Feed */}
         <div className="divide-y divide-gray-100 bg-white">
@@ -366,27 +518,68 @@ export default async function HomePage() {
               <FeedCard key={`${item.type}-${item.id}`} item={item} index={index} />
             ))
           ) : (
-            <div className="px-4 py-16 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                <MessageSquare className="h-8 w-8 text-gray-400" />
-              </div>
-              <h3 className="mb-2 text-lg font-medium text-gray-900">
-                No posts yet
-              </h3>
-              <p className="mb-6 text-gray-500">Be the first to share something!</p>
-              <div className="flex flex-wrap justify-center gap-3">
-                <Link
-                  href="/confessions/new"
-                  className="rounded-full bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 transition-colors"
-                >
-                  Post a Confession
-                </Link>
-                <Link
-                  href="/crushes/new"
-                  className="rounded-full bg-pink-600 px-4 py-2 text-sm font-medium text-white hover:bg-pink-700 transition-colors"
-                >
-                  Share a Crush
-                </Link>
+            /* Enhanced Empty State */
+            <div className="relative overflow-hidden px-4 py-16 text-center">
+              {/* Decorative background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-white to-pink-50" />
+              <div className="absolute top-8 left-1/4 h-20 w-20 rounded-full bg-purple-200/30 blur-2xl animate-float" />
+              <div className="absolute bottom-8 right-1/4 h-24 w-24 rounded-full bg-pink-200/30 blur-2xl animate-float-delayed" />
+              
+              <div className="relative z-10">
+                {/* Illustration-style icon group */}
+                <div className="mx-auto mb-6 flex items-center justify-center">
+                  <div className="relative">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-purple-100 to-purple-200 shadow-lg animate-glow">
+                      <MessageSquare className="h-10 w-10 text-purple-600" />
+                    </div>
+                    <div className="absolute -top-2 -right-4 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-rose-500 shadow-md animate-float">
+                      <Heart className="h-5 w-5 text-white" />
+                    </div>
+                    <div className="absolute -bottom-2 -left-4 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 shadow-md animate-float-delayed">
+                      <Eye className="h-5 w-5 text-white" />
+                    </div>
+                  </div>
+                </div>
+                
+                <h3 className="mb-2 text-xl font-bold text-gray-900">
+                  Be the First to Share!
+                </h3>
+                <p className="mx-auto mb-8 max-w-sm text-gray-500">
+                  This campus is waiting for its first confession. Start the conversation — your secret is safe here.
+                </p>
+                
+                <div className="flex flex-wrap justify-center gap-3">
+                  <Link
+                    href="/confessions/new"
+                    className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:scale-105"
+                  >
+                    <Sparkles className="h-4 w-4 group-hover:animate-pulse" />
+                    Post First Confession
+                  </Link>
+                  <Link
+                    href="/crushes/new"
+                    className="inline-flex items-center gap-2 rounded-full border-2 border-pink-200 bg-white px-6 py-3 text-sm font-semibold text-pink-600 transition-all hover:bg-pink-50 hover:border-pink-300 hover:scale-105"
+                  >
+                    <Heart className="h-4 w-4" />
+                    Reveal a Crush
+                  </Link>
+                </div>
+
+                {/* Trust indicators */}
+                <div className="mt-10 flex flex-wrap justify-center gap-4 text-xs text-gray-400">
+                  <span className="flex items-center gap-1">
+                    <Shield className="h-3.5 w-3.5" />
+                    End-to-end anonymous
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Users className="h-3.5 w-3.5" />
+                    Join thousands of students
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Lock className="h-3.5 w-3.5" />
+                    Your identity is never stored
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -394,8 +587,11 @@ export default async function HomePage() {
 
         {/* Load More / End of Feed */}
         {feedItems.length > 0 && (
-          <div className="bg-white px-4 py-8 text-center">
-            <p className="text-sm text-gray-500">You&apos;re all caught up! 🎉</p>
+          <div className="bg-gradient-to-b from-white to-gray-50 px-4 py-8 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-500">
+              <Sparkles className="h-4 w-4 text-purple-500" />
+              You&apos;re all caught up!
+            </div>
           </div>
         )}
       </div>

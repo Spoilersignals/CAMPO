@@ -60,7 +60,8 @@ export async function generatePersonalLink(): Promise<ActionResult<{ link: strin
 }
 
 export async function getMyPersonalLink(): Promise<ActionResult<{ 
-  link: string | null; 
+  link: string | null;
+  code: string | null;
   confessions: Array<{
     id: string;
     content: string;
@@ -82,6 +83,7 @@ export async function getMyPersonalLink(): Promise<ActionResult<{
         success: true, 
         data: { 
           link: null,
+          code: null,
           confessions: [],
         } 
       };
@@ -104,6 +106,7 @@ export async function getMyPersonalLink(): Promise<ActionResult<{
       success: true, 
       data: { 
         link: personalLink.code,
+        code: personalLink.code,
         confessions,
       } 
     };
@@ -241,5 +244,41 @@ export async function updateDisplayName(name: string): Promise<ActionResult> {
   } catch (error) {
     console.error("Failed to update display name:", error);
     return { success: false, error: "Failed to update name" };
+  }
+}
+
+export async function updatePersonalLinkCode(newCode: string): Promise<ActionResult> {
+  try {
+    const sessionId = await getSessionId();
+
+    const code = newCode.toLowerCase().trim();
+
+    if (code.length < 3 || code.length > 20) {
+      return { success: false, error: "Code must be 3-20 characters" };
+    }
+
+    if (!/^[a-z0-9_]+$/.test(code)) {
+      return { success: false, error: "Only lowercase letters, numbers, and underscores allowed" };
+    }
+
+    const existing = await prisma.personalLink.findUnique({
+      where: { code },
+      select: { sessionId: true },
+    });
+
+    if (existing && existing.sessionId !== sessionId) {
+      return { success: false, error: "This code is already taken" };
+    }
+
+    await prisma.personalLink.update({
+      where: { sessionId },
+      data: { code },
+    });
+
+    revalidatePath("/confessions/my-link");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update link code:", error);
+    return { success: false, error: "Failed to update code" };
   }
 }
