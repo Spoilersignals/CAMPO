@@ -51,10 +51,10 @@ interface MenuSection {
 
 const mainItems: MenuItem[] = [
   { href: "/", icon: Home, label: "Home", shortLabel: "Home" },
+  { href: "/marketplace", icon: ShoppingBag, label: "Marketplace", shortLabel: "Shop", highlight: true },
   { href: "/confessions", icon: MessageSquare, label: "Confessions", shortLabel: "Confess" },
-  { href: "/dating", icon: Heart, label: "Tinder", shortLabel: "Tinder" },
+  { href: "/dating", icon: Heart, label: "Dating", shortLabel: "Dating" },
   { href: "/spotted", icon: Eye, label: "Spotted", shortLabel: "Spotted" },
-  { href: "/chat", icon: MessagesSquare, label: "Campus Chat", shortLabel: "Chat" },
 ];
 
 const communityItems: MenuItem[] = [
@@ -72,10 +72,10 @@ const communityItems: MenuItem[] = [
 ];
 
 const marketplaceItems: MenuItem[] = [
-  { href: "/marketplace", icon: ShoppingBag, label: "Marketplace", shortLabel: "Shop" },
+  { href: "/sell", icon: Plus, label: "Sell Item", shortLabel: "Sell", highlight: true },
   { href: "/requests", icon: Package, label: "Item Requests", shortLabel: "Requests" },
   { href: "/lost-found", icon: Search, label: "Lost & Found", shortLabel: "Lost" },
-  { href: "/sell", icon: Plus, label: "Sell Item", shortLabel: "Sell", highlight: true },
+  { href: "/chat", icon: MessagesSquare, label: "Campus Chat", shortLabel: "Chat" },
 ];
 
 const accountItems: MenuItem[] = [
@@ -88,10 +88,10 @@ const accountItems: MenuItem[] = [
 
 const mobileItems: MenuItem[] = [
   { href: "/", icon: Home, label: "Home", shortLabel: "Home" },
-  { href: "/confessions", icon: MessageSquare, label: "Confessions", shortLabel: "Confess" },
-  { href: "/chat", icon: MessagesSquare, label: "Chat", shortLabel: "Chat" },
-  { href: "/dating", icon: Heart, label: "Tinder", shortLabel: "Tinder" },
   { href: "/marketplace", icon: ShoppingBag, label: "Shop", shortLabel: "Shop" },
+  { href: "/confessions", icon: MessageSquare, label: "Confess", shortLabel: "Confess" },
+  { href: "/dating", icon: Heart, label: "Dating", shortLabel: "Dating" },
+  { href: "/sell", icon: Plus, label: "Sell", shortLabel: "Sell" },
 ];
 
 export function SocialMenu({ user }: SocialMenuProps) {
