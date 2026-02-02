@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import {
   Home,
   MessagesSquare,
@@ -26,6 +27,8 @@ import {
   Flame,
   Mic,
   Clock,
+  LogOut,
+  Settings,
 } from "lucide-react";
 
 interface SocialMenuProps {
@@ -84,6 +87,7 @@ const getAccountItems = (userId?: string): MenuItem[] => [
   { href: "/messages", icon: MessageSquare, label: "Messages", shortLabel: "Messages" },
   { href: "/notifications", icon: Bell, label: "Notifications", shortLabel: "Alerts" },
   { href: userId ? `/profile/${userId}` : "/dashboard", icon: User, label: "Profile", shortLabel: "Profile" },
+  { href: "/notifications/settings", icon: Settings, label: "Settings", shortLabel: "Settings" },
 ];
 
 const mobileItems: MenuItem[] = [
@@ -140,7 +144,7 @@ export function SocialMenu({ user }: SocialMenuProps) {
 
       {/* Desktop Sidebar */}
       <aside className="fixed left-0 top-0 z-40 hidden h-full w-64 border-r bg-white pt-16 md:block overflow-y-auto">
-        <div className="flex flex-col gap-2 p-4">
+        <div className="flex flex-col gap-2 p-4 pb-24">
           {sections.map((section, sectionIndex) => (
             <div key={section.title} className={sectionIndex > 0 ? "mt-4" : ""}>
               <h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
@@ -176,6 +180,19 @@ export function SocialMenu({ user }: SocialMenuProps) {
               </nav>
             </div>
           ))}
+
+          {/* Logout Button - Fixed at bottom */}
+          {user && (
+            <div className="mt-6 border-t pt-4">
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <LogOut className="h-5 w-5" />
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 

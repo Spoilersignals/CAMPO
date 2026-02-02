@@ -32,8 +32,10 @@ export async function Header() {
   let isAdmin = false;
   let unreadNotifications = 0;
   
+  let unreadMessages = 0;
+  
   if (session?.user?.id) {
-    const [user, notifCount] = await Promise.all([
+    const [user, notifCount, msgCount] = await Promise.all([
       prisma.user.findUnique({
         where: { id: session.user.id },
         select: { role: true },
@@ -41,9 +43,22 @@ export async function Header() {
       prisma.notification.count({
         where: { userId: session.user.id, readAt: null },
       }),
+      prisma.chatMessage.count({
+        where: { 
+          readAt: null,
+          senderId: { not: session.user.id },
+          thread: {
+            OR: [
+              { sellerId: session.user.id },
+              { buyerId: session.user.id },
+            ],
+          },
+        },
+      }),
     ]);
     isAdmin = user?.role === "ADMIN";
     unreadNotifications = notifCount;
+    unreadMessages = msgCount;
   }
 
   return (
@@ -163,6 +178,17 @@ export async function Header() {
           
           {session?.user ? (
             <>
+              <Link
+                href="/messages"
+                className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                <MessageSquare className="h-5 w-5" />
+                {unreadMessages > 0 && (
+                  <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-purple-500 text-[10px] font-medium text-white">
+                    {unreadMessages > 9 ? "9+" : unreadMessages}
+                  </span>
+                )}
+              </Link>
               <Link
                 href="/notifications"
                 className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"

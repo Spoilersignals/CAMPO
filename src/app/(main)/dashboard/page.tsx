@@ -11,6 +11,7 @@ import {
   ArrowRight,
   AlertCircle,
   Star,
+  GraduationCap,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -18,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getSellerDashboardStats } from "@/actions/listings";
+import { getUniversityFromEmail } from "@/lib/university";
 
 async function getRecentActivity(userId: string) {
   const [recentListings, recentMessages] = await Promise.all([
@@ -81,12 +83,20 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const university = getUniversityFromEmail(session.user.email);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Seller Dashboard</h1>
           <p className="text-gray-600">Welcome back, {session.user.name}!</p>
+          {university && (
+            <div className={`mt-2 inline-flex items-center gap-2 rounded-full bg-gradient-to-r ${university.color} px-3 py-1 text-sm font-medium text-white`}>
+              <GraduationCap className="h-4 w-4" />
+              {university.name}
+            </div>
+          )}
         </div>
         <Link href="/sell">
           <Button>

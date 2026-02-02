@@ -8,6 +8,9 @@ const STATIC_ASSETS = [
   '/offline',
 ];
 
+// Badge count tracking
+let badgeCount = 0;
+
 // Install event
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -71,11 +74,16 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   const data = event.data?.json() || {};
   
+  // Increment badge count
+  badgeCount++;
+
   const options = {
     body: data.body || 'New notification',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge-72x72.png',
+    icon: data.icon || '/icons/icon-192x192.png',
+    badge: data.badge || '/icons/badge-72x72.png',
     vibrate: [100, 50, 100],
+    tag: data.tag || 'default',
+    renotify: true,
     data: {
       url: data.url || '/',
     },
@@ -86,13 +94,24 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Campus', options)
+    Promise.all([
+      self.registration.showNotification(data.title || 'ComradeZone', options),
+      // Set app badge if supported
+      navigator.setAppBadge ? navigator.setAppBadge(badgeCount) : Promise.resolve()
+    ])
   );
 });
 
 // Notification click event
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+  badgeCount = Math.max(0, badgeCount - 1);
+
+  if (navigator.clearAppBadge && badgeCount === 0) {
+    navigator.clearAppBadge();
+  } else if (navigator.setAppBadge && badgeCount > 0) {
+    navigator.setAppBadge(badgeCount);
+  }
 
   if (event.action === 'dismiss') return;
 

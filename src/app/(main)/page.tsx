@@ -20,6 +20,9 @@ import {
   HandHeart,
   Play,
   Video,
+  Repeat2,
+  Share,
+  CheckCircle,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatDistanceToNow } from "date-fns";
@@ -156,17 +159,6 @@ async function getVideoPreview(): Promise<VideoPreview[]> {
   }));
 }
 
-function AnimatedCounter({ value, label }: { value: number; label: string }) {
-  return (
-    <div className="text-center">
-      <div className="text-3xl font-bold text-white sm:text-4xl md:text-5xl animate-count-up">
-        {value.toLocaleString()}+
-      </div>
-      <div className="text-sm text-blue-200 mt-1">{label}</div>
-    </div>
-  );
-}
-
 function QuickAccessCard({
   href,
   icon: Icon,
@@ -268,7 +260,7 @@ function ConfessionCard({
   return (
     <Link
       href={`/confessions/${confession.id}`}
-      className={`block rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-purple-200 opacity-0 animate-slide-up`}
+      className={`block rounded-xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-purple-200 opacity-0 animate-slide-up card-glow-hover`}
       style={{
         animationDelay: `${index * 100}ms`,
         animationFillMode: "forwards",
@@ -318,13 +310,13 @@ function FeatureCard({
 }) {
   return (
     <div
-      className={`group rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-purple-200 hover:-translate-y-1 opacity-0 animate-slide-up`}
+      className={`group rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-purple-200 hover:-translate-y-1 opacity-0 animate-slide-up card-glow-hover`}
       style={{ animationDelay: `${delay}ms`, animationFillMode: "forwards" }}
     >
-      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg shadow-purple-200 transition-transform group-hover:scale-110">
+      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg shadow-purple-200 transition-transform group-hover:scale-110 group-hover:shadow-purple-300/50">
         <Icon className="h-6 w-6 text-white" />
       </div>
-      <h3 className="mb-2 text-lg font-bold text-gray-900">{title}</h3>
+      <h3 className="mb-2 text-lg font-bold text-gray-900 group-hover:text-purple-700 transition-colors">{title}</h3>
       <p className="text-sm text-gray-600">{description}</p>
     </div>
   );
@@ -393,6 +385,105 @@ function VideoPreviewCard({ video, index }: { video: VideoPreview; index: number
   );
 }
 
+const samplePosts = [
+  {
+    id: 'sample-1',
+    content: "Who else is surviving on instant noodles this month? 😅 #BrokeStudentLife",
+    author: "Anonymous",
+    likes: 234,
+    retweets: 45,
+    comments: 67,
+    time: "2h ago",
+    isVerified: false,
+  },
+  {
+    id: 'sample-2',
+    content: "That feeling when you finally finish your thesis... but then realize you have 3 more exams next week 📚",
+    author: "Verified Student",
+    isVerified: true,
+    likes: 189,
+    retweets: 32,
+    comments: 28,
+    time: "4h ago",
+  },
+  {
+    id: 'sample-3',
+    content: "Library seats at 6am vs 6pm are two completely different universes. Early bird gets the power socket! 🔌",
+    author: "Anonymous",
+    likes: 412,
+    retweets: 89,
+    comments: 56,
+    time: "5h ago",
+    isVerified: false,
+  },
+  {
+    id: 'sample-4',
+    content: "Shoutout to everyone pretending to study while scrolling through their phones. We see you. We are you. 👀",
+    author: "Campus Life",
+    isVerified: true,
+    likes: 567,
+    retweets: 123,
+    comments: 89,
+    time: "6h ago",
+  },
+  {
+    id: 'sample-5',
+    content: "The WiFi in the hostel is giving dial-up internet vibes today. Who else is struggling? 📶",
+    author: "Anonymous",
+    likes: 298,
+    retweets: 67,
+    comments: 145,
+    time: "8h ago",
+    isVerified: false,
+  },
+];
+
+function ForYouPost({ post, index }: { post: typeof samplePosts[0]; index: number }) {
+  return (
+    <div
+      className="border-b border-gray-200 dark:border-gray-700 p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer opacity-0 animate-slide-up"
+      style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+    >
+      <div className="flex gap-3">
+        <div className="flex-shrink-0">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <span className="text-white font-bold text-sm">
+              {post.author.charAt(0)}
+            </span>
+          </div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-gray-900 dark:text-white">{post.author}</span>
+            {post.isVerified && (
+              <CheckCircle className="h-4 w-4 text-blue-500" />
+            )}
+            <span className="text-gray-500 dark:text-gray-400 text-sm">· {post.time}</span>
+          </div>
+          <p className="mt-1 text-gray-800 dark:text-gray-200">{post.content}</p>
+          <div className="mt-3 flex items-center gap-6 text-gray-500 dark:text-gray-400">
+            <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors group">
+              <MessageCircle className="h-4 w-4 group-hover:scale-110 transition-transform" />
+              <span className="text-sm">{post.comments}</span>
+            </button>
+            <button className="flex items-center gap-1.5 hover:text-green-500 transition-colors group">
+              <Repeat2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
+              <span className="text-sm">{post.retweets}</span>
+            </button>
+            <button className="flex items-center gap-1.5 hover:text-pink-500 transition-colors group">
+              <Heart className="h-4 w-4 group-hover:scale-110 transition-transform" />
+              <span className="text-sm">{post.likes}</span>
+            </button>
+            <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors group">
+              <Share className="h-4 w-4 group-hover:scale-110 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default async function HomePage() {
   const [listings, confessions, stats, suggestions, videos] = await Promise.all([
     getMarketplaceListings(),
@@ -405,13 +496,16 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 animate-gradient">
-        {/* Animated floating blobs */}
+      <section className="relative overflow-hidden bg-mesh bg-noise">
+        {/* Animated gradient orbs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-amber-500/30 blur-3xl animate-float animate-morph" />
-          <div className="absolute top-1/4 -right-20 h-72 w-72 rounded-full bg-blue-500/30 blur-3xl animate-float-delayed" />
-          <div className="absolute -bottom-32 left-1/3 h-80 w-80 rounded-full bg-teal-500/25 blur-3xl animate-float-slow" />
+          <div className="orb-1 -top-20 -left-20" />
+          <div className="orb-2 top-1/4 -right-20" />
+          <div className="orb-3 -bottom-32 left-1/3" />
+          
+          {/* Additional floating blobs */}
           <div className="absolute top-1/2 left-1/4 h-40 w-40 rounded-full bg-amber-400/20 blur-2xl animate-float" />
+          <div className="absolute bottom-1/4 right-1/4 h-48 w-48 rounded-full bg-cyan-400/15 blur-3xl animate-float-delayed" />
           
           {/* Floating decorative shapes */}
           <div className="absolute top-16 right-[10%] h-4 w-4 rounded-full bg-white/40 animate-float" />
@@ -423,32 +517,35 @@ export default async function HomePage() {
           {/* Large rotating circle decoration */}
           <div className="absolute -bottom-40 -right-40 h-80 w-80 rounded-full border border-white/10 animate-rotate-slow" />
           <div className="absolute -bottom-32 -right-32 h-64 w-64 rounded-full border border-white/5 animate-rotate-slow" style={{ animationDirection: "reverse" }} />
+          
+          {/* Grid pattern overlay */}
+          <div className="absolute inset-0 pattern-grid opacity-30" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-16 sm:py-24 md:py-32">
           {/* Trust badges */}
           <div className="mb-8 flex flex-wrap justify-center gap-3 opacity-0 animate-slide-up" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
-            <span className="inline-flex items-center gap-1.5 rounded-full glass px-4 py-2 text-sm font-medium text-white">
-              <Shield className="h-4 w-4" />
+            <span className="inline-flex items-center gap-1.5 rounded-full glass-card px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/15">
+              <Shield className="h-4 w-4 text-emerald-400" />
               100% Anonymous
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full glass px-4 py-2 text-sm font-medium text-white">
-              <Lock className="h-4 w-4" />
+            <span className="inline-flex items-center gap-1.5 rounded-full glass-card px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/15">
+              <Lock className="h-4 w-4 text-blue-400" />
               No Login Required
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full glass px-4 py-2 text-sm font-medium text-white">
-              <Zap className="h-4 w-4" />
+            <span className="inline-flex items-center gap-1.5 rounded-full glass-card px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/15">
+              <Zap className="h-4 w-4 text-amber-400" />
               Instant Access
             </span>
           </div>
 
           {/* Headline with gradient text */}
           <h1 className="text-center opacity-0 animate-slide-up" style={{ animationDelay: "100ms", animationFillMode: "forwards" }}>
-            <span className="block text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+            <span className="block text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl drop-shadow-lg">
               Your Campus,
             </span>
             <span className="mt-2 block text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 bg-clip-text text-transparent animate-text-shimmer bg-[length:200%_200%]">
+              <span className="text-gradient-warm animate-text-shimmer bg-[length:200%_200%]">
                 Connected
               </span>
             </span>
@@ -466,16 +563,16 @@ export default async function HomePage() {
           <div className="mt-10 flex flex-wrap justify-center gap-4 opacity-0 animate-slide-up" style={{ animationDelay: "300ms", animationFillMode: "forwards" }}>
             <Link
               href="/marketplace"
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-8 py-4 text-lg font-semibold text-slate-900 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105"
+              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-8 py-4 text-lg font-semibold text-slate-900 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105 glow-amber"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-amber-300 to-orange-400 opacity-0 transition-opacity group-hover:opacity-100" />
-              <ShoppingBag className="h-5 w-5" />
-              Explore Marketplace
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              <ShoppingBag className="relative z-10 h-5 w-5" />
+              <span className="relative z-10">Explore Marketplace</span>
+              <ArrowRight className="relative z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               href="/confessions/new"
-              className="inline-flex items-center gap-2 rounded-full glass px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:bg-white/20 hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-full glass-card px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:bg-white/20 hover:scale-105 glow-purple"
             >
               <MessageSquare className="h-5 w-5" />
               Share Confession
@@ -483,11 +580,31 @@ export default async function HomePage() {
           </div>
 
           {/* Stats counters */}
-          <div className="mt-16 grid grid-cols-2 gap-6 sm:grid-cols-4 opacity-0 animate-slide-up" style={{ animationDelay: "400ms", animationFillMode: "forwards" }}>
-            <AnimatedCounter value={stats.totalPosts} label="Total Posts" />
-            <AnimatedCounter value={stats.activeUsers} label="Active Users" />
-            <AnimatedCounter value={stats.itemsListed} label="Items Listed" />
-            <AnimatedCounter value={stats.messagesSent} label="Messages Sent" />
+          <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4 opacity-0 animate-slide-up" style={{ animationDelay: "400ms", animationFillMode: "forwards" }}>
+            <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="text-3xl font-bold text-white sm:text-4xl animate-count-up">
+                {stats.totalPosts.toLocaleString()}+
+              </div>
+              <div className="text-sm text-blue-200 mt-1">Total Posts</div>
+            </div>
+            <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="text-3xl font-bold text-white sm:text-4xl animate-count-up">
+                {stats.activeUsers.toLocaleString()}+
+              </div>
+              <div className="text-sm text-pink-200 mt-1">Active Users</div>
+            </div>
+            <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="text-3xl font-bold text-white sm:text-4xl animate-count-up">
+                {stats.itemsListed.toLocaleString()}+
+              </div>
+              <div className="text-sm text-emerald-200 mt-1">Items Listed</div>
+            </div>
+            <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="text-3xl font-bold text-white sm:text-4xl animate-count-up">
+                {stats.messagesSent.toLocaleString()}+
+              </div>
+              <div className="text-sm text-amber-200 mt-1">Messages Sent</div>
+            </div>
           </div>
         </div>
       </section>
@@ -630,12 +747,14 @@ export default async function HomePage() {
       )}
 
       {/* Live Marketplace Preview */}
-      <section className="mt-0 py-12 bg-white">
+      <section className="mt-0 py-12 bg-white section-divider pt-16">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <span className="text-2xl">🔥</span>
-              <h2 className="text-2xl font-bold text-gray-900">Hot Deals Right Now</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Hot Deals <span className="text-gradient-warm">Right Now</span>
+              </h2>
               <span className="ml-2 animate-pulse rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600">
                 LIVE
               </span>
@@ -678,12 +797,14 @@ export default async function HomePage() {
       </section>
 
       {/* Latest Confessions Feed */}
-      <section className="py-12 bg-gray-50">
+      <section className="py-12 bg-gray-50 section-divider pt-16">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-6 w-6 text-purple-600" />
-              <h2 className="text-2xl font-bold text-gray-900">Latest Confessions</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Latest <span className="text-gradient-blue">Confessions</span>
+              </h2>
             </div>
             <Link
               href="/confessions"
@@ -711,6 +832,25 @@ export default async function HomePage() {
                 </Link>
               </div>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* For You Feed - Twitter style */}
+      <section className="py-12 bg-white dark:bg-gray-900">
+        <div className="mx-auto max-w-2xl px-4">
+          <div className="flex items-center justify-between mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">For You</h2>
+            <div className="flex gap-2">
+              <button className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-full">For You</button>
+              <button className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-full">Following</button>
+            </div>
+          </div>
+          
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            {samplePosts.map((post, index) => (
+              <ForYouPost key={post.id} post={post} index={index} />
+            ))}
           </div>
         </div>
       </section>
@@ -766,10 +906,12 @@ export default async function HomePage() {
       </section>
 
       {/* Feature Highlights */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white section-divider pt-20">
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Why Students Love Us</h2>
+            <h2 className="text-3xl font-bold text-gray-900">
+              Why Students <span className="text-gradient-blue">Love Us</span>
+            </h2>
             <p className="mt-2 text-gray-600">Built for campus life, designed for privacy</p>
           </div>
 
@@ -797,15 +939,17 @@ export default async function HomePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="relative py-20 bg-gradient-to-br from-purple-600 to-indigo-700 overflow-hidden">
+      <section className="relative py-20 bg-mesh overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-pink-500/20 blur-3xl animate-float" />
-          <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-cyan-500/20 blur-3xl animate-float-delayed" />
+          <div className="orb-1 -top-20 -right-20" />
+          <div className="orb-2 -bottom-20 -left-20" />
+          <div className="orb-3 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute inset-0 pattern-dots opacity-20" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
-          <h2 className="text-3xl font-bold text-white sm:text-4xl mb-4">
-            Ready to Join Your Campus Community?
+          <h2 className="text-3xl font-bold text-white sm:text-4xl mb-4 drop-shadow-lg">
+            Ready to Join Your <span className="text-gradient-warm">Campus Community</span>?
           </h2>
           <p className="text-lg text-purple-100 mb-8">
             Start confessing, shopping, and connecting — all anonymously.
@@ -813,14 +957,14 @@ export default async function HomePage() {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/confessions/new"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-lg font-semibold text-purple-700 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-lg font-semibold text-purple-700 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105 glow-purple"
             >
               <Sparkles className="h-5 w-5" />
               Make Your First Confession
             </Link>
             <Link
               href="/marketplace"
-              className="inline-flex items-center gap-2 rounded-full glass px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:bg-white/20 hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-full glass-card px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:bg-white/20 hover:scale-105"
             >
               <ShoppingBag className="h-5 w-5" />
               Browse Marketplace

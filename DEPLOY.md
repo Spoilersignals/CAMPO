@@ -23,9 +23,21 @@ Add these environment variables in Digital Ocean App Settings:
 
 | Variable | Value |
 |----------|-------|
-| `DATABASE_URL` | (Auto-filled if you add a database) |
+| `DATABASE_URL` | Your PostgreSQL connection string with `?sslmode=require` |
 | `NEXTAUTH_SECRET` | Generate with: `openssl rand -base64 32` |
 | `NEXTAUTH_URL` | `https://your-domain.com` |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Generate with: `npx web-push generate-vapid-keys` |
+| `VAPID_PRIVATE_KEY` | (From the same command above) |
+
+### Optional Email Configuration
+| Variable | Value |
+|----------|-------|
+| `SMTP_HOST` | `smtp.gmail.com` (or your provider) |
+| `SMTP_PORT` | `587` |
+| `SMTP_SECURE` | `false` |
+| `SMTP_USER` | Your email address |
+| `SMTP_PASS` | Your app password |
+| `SMTP_FROM` | `ComradeZone <noreply@comradezone.com>` |
 
 ### 4. Add PostgreSQL Database
 

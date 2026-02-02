@@ -32,7 +32,8 @@
     "react-hook-form": "^7.71.1",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.3.6",
-    "nodemailer": "^6.9.8"
+    "nodemailer": "^6.9.8",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
