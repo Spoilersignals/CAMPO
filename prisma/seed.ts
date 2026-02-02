@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -20,6 +21,7 @@ const categories = [
 async function main() {
   console.log("Seeding database...");
 
+  // Seed categories
   for (const category of categories) {
     await prisma.category.upsert({
       where: { slug: category.slug },
@@ -27,8 +29,32 @@ async function main() {
       create: category,
     });
   }
-
   console.log("Seeded categories:", categories.length);
+
+  // Create admin user
+  const adminEmail = "bnyolei@kabarak.ac.ke";
+  const adminPassword = await hash("Zasa1898@!??", 12);
+  
+  const admin = await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: {
+      role: "ADMIN",
+      isVerified: true,
+      emailVerified: new Date(),
+    },
+    create: {
+      email: adminEmail,
+      name: "KabuConfession",
+      password: adminPassword,
+      role: "ADMIN",
+      isVerified: true,
+      emailVerified: new Date(),
+      schoolName: "Kabarak University",
+      sellerApproved: true,
+      confessionLink: "kabuconfession",
+    },
+  });
+  console.log("Admin user created/updated:", admin.email);
 }
 
 main()

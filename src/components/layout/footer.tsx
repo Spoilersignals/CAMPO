@@ -87,7 +87,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/my-listings"
+                  href="/dashboard/listings"
                   className="text-sm text-gray-600 hover:text-indigo-600"
                 >
                   My Listings

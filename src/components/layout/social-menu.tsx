@@ -78,12 +78,12 @@ const marketplaceItems: MenuItem[] = [
   { href: "/chat", icon: MessagesSquare, label: "Campus Chat", shortLabel: "Chat" },
 ];
 
-const accountItems: MenuItem[] = [
+const getAccountItems = (userId?: string): MenuItem[] => [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", shortLabel: "Dashboard" },
-  { href: "/my-listings", icon: Package, label: "My Listings", shortLabel: "Listings" },
+  { href: "/dashboard/listings", icon: Package, label: "My Listings", shortLabel: "Listings" },
   { href: "/messages", icon: MessageSquare, label: "Messages", shortLabel: "Messages" },
   { href: "/notifications", icon: Bell, label: "Notifications", shortLabel: "Alerts" },
-  { href: "/profile", icon: User, label: "Profile", shortLabel: "Profile" },
+  { href: userId ? `/profile/${userId}` : "/dashboard", icon: User, label: "Profile", shortLabel: "Profile" },
 ];
 
 const mobileItems: MenuItem[] = [
@@ -104,7 +104,7 @@ export function SocialMenu({ user }: SocialMenuProps) {
   ];
 
   if (user) {
-    sections.push({ title: "Account", items: accountItems });
+    sections.push({ title: "Account", items: getAccountItems(user.id) });
   }
 
   const isActive = (href: string) => {

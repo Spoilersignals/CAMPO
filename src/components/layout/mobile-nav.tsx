@@ -35,6 +35,7 @@ import {
 
 interface MobileNavProps {
   user?: {
+    id?: string;
     name?: string | null;
     email?: string | null;
     image?: string | null;
@@ -261,7 +262,7 @@ export function MobileNav({ user, isAdmin }: MobileNavProps) {
                     Dashboard
                   </Link>
                   <Link
-                    href="/my-listings"
+                    href="/dashboard/listings"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100"
                   >
@@ -277,7 +278,7 @@ export function MobileNav({ user, isAdmin }: MobileNavProps) {
                     Messages
                   </Link>
                   <Link
-                    href="/profile"
+                    href={user?.id ? `/profile/${user.id}` : "/dashboard"}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100"
                   >

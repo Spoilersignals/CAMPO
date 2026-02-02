@@ -162,7 +162,7 @@ function AnimatedCounter({ value, label }: { value: number; label: string }) {
       <div className="text-3xl font-bold text-white sm:text-4xl md:text-5xl animate-count-up">
         {value.toLocaleString()}+
       </div>
-      <div className="text-sm text-purple-200 mt-1">{label}</div>
+      <div className="text-sm text-blue-200 mt-1">{label}</div>
     </div>
   );
 }
@@ -229,7 +229,7 @@ function ProductCard({ listing, index }: { listing: Listing; index: number }) {
       <div className="p-3">
         <h4 className="truncate font-semibold text-gray-900">{listing.title}</h4>
         <div className="mt-1 flex items-center justify-between">
-          <span className="text-lg font-bold text-purple-600">
+          <span className="text-lg font-bold text-blue-600">
             Ksh {listing.price.toLocaleString()}
           </span>
           <span className="flex items-center gap-1 text-xs text-gray-500">
@@ -405,13 +405,13 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 animate-gradient">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 animate-gradient">
         {/* Animated floating blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-pink-500/30 blur-3xl animate-float animate-morph" />
-          <div className="absolute top-1/4 -right-20 h-72 w-72 rounded-full bg-yellow-500/20 blur-3xl animate-float-delayed" />
-          <div className="absolute -bottom-32 left-1/3 h-80 w-80 rounded-full bg-blue-500/25 blur-3xl animate-float-slow" />
-          <div className="absolute top-1/2 left-1/4 h-40 w-40 rounded-full bg-cyan-400/20 blur-2xl animate-float" />
+          <div className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-amber-500/30 blur-3xl animate-float animate-morph" />
+          <div className="absolute top-1/4 -right-20 h-72 w-72 rounded-full bg-blue-500/30 blur-3xl animate-float-delayed" />
+          <div className="absolute -bottom-32 left-1/3 h-80 w-80 rounded-full bg-teal-500/25 blur-3xl animate-float-slow" />
+          <div className="absolute top-1/2 left-1/4 h-40 w-40 rounded-full bg-amber-400/20 blur-2xl animate-float" />
           
           {/* Floating decorative shapes */}
           <div className="absolute top-16 right-[10%] h-4 w-4 rounded-full bg-white/40 animate-float" />
@@ -448,17 +448,17 @@ export default async function HomePage() {
               Your Campus,
             </span>
             <span className="mt-2 block text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              <span className="bg-gradient-to-r from-pink-300 via-yellow-200 to-cyan-300 bg-clip-text text-transparent animate-text-shimmer bg-[length:200%_200%]">
-                Uncensored
+              <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-orange-400 bg-clip-text text-transparent animate-text-shimmer bg-[length:200%_200%]">
+                Connected
               </span>
             </span>
           </h1>
 
           {/* Subheadline */}
-          <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-purple-100 sm:text-xl opacity-0 animate-slide-up" style={{ animationDelay: "200ms", animationFillMode: "forwards" }}>
+          <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-blue-100 sm:text-xl opacity-0 animate-slide-up" style={{ animationDelay: "200ms", animationFillMode: "forwards" }}>
             Buy, sell, confess, and connect with your campus community.
-            <span className="block mt-1 text-purple-200/80">
-              Everything you need, completely anonymous.
+            <span className="block mt-1 text-blue-200/80">
+              Everything you need, one platform.
             </span>
           </p>
 
@@ -466,9 +466,9 @@ export default async function HomePage() {
           <div className="mt-10 flex flex-wrap justify-center gap-4 opacity-0 animate-slide-up" style={{ animationDelay: "300ms", animationFillMode: "forwards" }}>
             <Link
               href="/marketplace"
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-white px-8 py-4 text-lg font-semibold text-purple-700 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105"
+              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-8 py-4 text-lg font-semibold text-slate-900 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-pink-500 to-purple-500 opacity-0 transition-opacity group-hover:opacity-10" />
+              <span className="absolute inset-0 bg-gradient-to-r from-amber-300 to-orange-400 opacity-0 transition-opacity group-hover:opacity-100" />
               <ShoppingBag className="h-5 w-5" />
               Explore Marketplace
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />

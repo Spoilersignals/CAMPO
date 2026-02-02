@@ -72,7 +72,7 @@ export function NavSidebar({ user }: NavSidebarProps) {
 
   const accountItems: NavItem[] = [
     { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
-    { label: "My Listings", href: "/my-listings", icon: <Package className="h-5 w-5" /> },
+    { label: "My Listings", href: "/dashboard/listings", icon: <Package className="h-5 w-5" /> },
     { label: "Messages", href: "/messages", icon: <MessageSquare className="h-5 w-5" /> },
     { label: "Notifications", href: "/notifications", icon: <Bell className="h-5 w-5" /> },
   ];

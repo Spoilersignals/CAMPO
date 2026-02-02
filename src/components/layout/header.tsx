@@ -52,7 +52,7 @@ export async function Header() {
         <div className="flex items-center gap-4">
           {/* Profile icon on the left - mobile only */}
           <Link
-            href={session?.user ? "/profile" : "/login"}
+            href={session?.user?.id ? `/profile/${session.user.id}` : "/login"}
             className="flex md:hidden h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600"
           >
             <User className="h-5 w-5" />
@@ -207,7 +207,7 @@ export async function Header() {
                     Dashboard
                   </Link>
                   <Link
-                    href="/my-listings"
+                    href="/dashboard/listings"
                     className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <Package className="h-4 w-4" />
@@ -221,7 +221,7 @@ export async function Header() {
                     Messages
                   </Link>
                   <Link
-                    href="/profile"
+                    href={`/profile/${session.user.id}`}
                     className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     <User className="h-4 w-4" />
