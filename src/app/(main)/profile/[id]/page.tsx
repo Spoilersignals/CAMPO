@@ -91,7 +91,23 @@ export default async function ProfilePage({
 }) {
   const { id } = await params;
   const session = await auth();
-  const profile = await getProfile(id);
+  
+  let profile;
+  try {
+    profile = await getProfile(id);
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="py-8 text-center">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
+            <p className="text-gray-500">Unable to load profile. Please try again later.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!profile) {
     notFound();
@@ -99,12 +115,21 @@ export default async function ProfilePage({
 
   const isOwnProfile = session?.user?.id === id;
   
-  const [followCounts, isFollowing, followers, following] = await Promise.all([
-    getFollowCounts(id),
-    session?.user ? getFollowStatus(id) : Promise.resolve(false),
-    getFollowers(id),
-    getFollowing(id),
-  ]);
+  let followCounts = { followersCount: 0, followingCount: 0 };
+  let isFollowing = false;
+  let followers: Awaited<ReturnType<typeof getFollowers>> = [];
+  let following: Awaited<ReturnType<typeof getFollowing>> = [];
+  
+  try {
+    [followCounts, isFollowing, followers, following] = await Promise.all([
+      getFollowCounts(id),
+      session?.user ? getFollowStatus(id) : Promise.resolve(false),
+      getFollowers(id),
+      getFollowing(id),
+    ]);
+  } catch (error) {
+    console.error("Error fetching follow data:", error);
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

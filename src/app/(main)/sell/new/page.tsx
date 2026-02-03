@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Upload, X, Info, DollarSign } from "lucide-react";
+import { ArrowLeft, Upload, X, Info, DollarSign, MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,6 +29,7 @@ const sellFormSchema = z.object({
   usageDuration: z.string().optional(),
   deliveryMethod: z.enum(["Pickup", "Delivery", "Both"]),
   pickupLocation: z.string().optional(),
+  location: z.string().min(3, "Please specify where you're located (e.g., campus, hostel name)"),
 }).refine((data) => {
   if (data.condition === "Used" && !data.usageDuration) {
     return false;
@@ -73,6 +74,7 @@ export default function NewListingPage() {
       categoryId: "",
       condition: "New",
       deliveryMethod: "Pickup",
+      location: "",
     },
   });
 
@@ -234,10 +236,29 @@ export default function NewListingPage() {
               ))}
             </Select>
 
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <div className="flex items-start gap-3">
+                <MapPin className="h-5 w-5 text-amber-600 mt-0.5" />
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-amber-900 mb-2">
+                    Your Location (Required)
+                  </label>
+                  <Input
+                    placeholder="e.g., Main Campus, Hostel A, Library Area"
+                    error={errors.location?.message}
+                    {...register("location")}
+                  />
+                  <p className="mt-1 text-xs text-amber-700">
+                    This helps buyers know where to meet you for the transaction
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {(deliveryMethod === "Pickup" || deliveryMethod === "Both") && (
               <Input
-                label="Pickup Location"
-                placeholder="e.g., Campus Library, Student Center"
+                label="Specific Pickup Point (Optional)"
+                placeholder="e.g., Campus Library entrance, Student Center cafe"
                 error={errors.pickupLocation?.message}
                 {...register("pickupLocation")}
               />

@@ -234,11 +234,26 @@ export function CommentThread({
 }: CommentThreadProps) {
   const [comments, setComments] = React.useState<Comment[]>(initialComments);
   const [replyingTo, setReplyingTo] = React.useState<string | null>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    setComments(initialComments);
-  }, [initialComments]);
+    loadComments();
+  }, [contentType, contentId]);
+
+  async function loadComments() {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`/api/comments?type=${contentType}&id=${contentId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setComments(data.comments || []);
+      }
+    } catch (error) {
+      console.error("Failed to load comments:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const handleAddComment = async (
     content: string,
@@ -247,42 +262,44 @@ export function CommentThread({
   ) => {
     if (onAddComment) {
       await onAddComment(content, authorName, parentId);
-    } else {
-      const newComment: Comment = {
-        id: `temp-${Date.now()}`,
-        authorName,
-        content,
-        createdAt: new Date(),
-        reactions: [],
-        userReactions: [],
-        parentId,
-      };
+      return;
+    }
 
-      if (parentId) {
-        setComments((prev) =>
-          prev.map((c) => {
-            if (c.id === parentId) {
-              return {
-                ...c,
-                replies: [...(c.replies || []), newComment],
-              };
-            }
-            if (c.replies) {
-              return {
-                ...c,
-                replies: c.replies.map((r) =>
-                  r.id === parentId
-                    ? { ...r, replies: [...(r.replies || []), newComment] }
-                    : r
-                ),
-              };
-            }
-            return c;
-          })
-        );
-      } else {
-        setComments((prev) => [...prev, newComment]);
+    try {
+      const res = await fetch("/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contentType,
+          contentId,
+          content,
+          authorName,
+          parentId,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.comment) {
+          if (parentId) {
+            setComments((prev) =>
+              prev.map((c) => {
+                if (c.id === parentId) {
+                  return {
+                    ...c,
+                    replies: [...(c.replies || []), data.comment],
+                  };
+                }
+                return c;
+              })
+            );
+          } else {
+            setComments((prev) => [...prev, data.comment]);
+          }
+        }
       }
+    } catch (error) {
+      console.error("Failed to add comment:", error);
     }
     setReplyingTo(null);
   };

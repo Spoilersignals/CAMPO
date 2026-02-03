@@ -4,14 +4,12 @@ import {
   MessageSquare,
   Heart,
   ShoppingBag,
-  Camera,
   ArrowRight,
   Shield,
   Lock,
   Users,
   Sparkles,
   TrendingUp,
-  Clock,
   ChevronRight,
   Zap,
   Star,
@@ -20,12 +18,14 @@ import {
   HandHeart,
   Play,
   Video,
-  Repeat2,
-  Share,
-  CheckCircle,
+  Camera,
+  Clock,
+  ChevronDown,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatDistanceToNow } from "date-fns";
+import { ForYouFeed } from "@/components/for-you-feed";
+import { FloatingCreateButton } from "@/components/floating-create-button";
 
 type Listing = {
   id: string;
@@ -385,104 +385,7 @@ function VideoPreviewCard({ video, index }: { video: VideoPreview; index: number
   );
 }
 
-const samplePosts = [
-  {
-    id: 'sample-1',
-    content: "Who else is surviving on instant noodles this month? 😅 #BrokeStudentLife",
-    author: "Anonymous",
-    likes: 234,
-    retweets: 45,
-    comments: 67,
-    time: "2h ago",
-    isVerified: false,
-  },
-  {
-    id: 'sample-2',
-    content: "That feeling when you finally finish your thesis... but then realize you have 3 more exams next week 📚",
-    author: "Verified Student",
-    isVerified: true,
-    likes: 189,
-    retweets: 32,
-    comments: 28,
-    time: "4h ago",
-  },
-  {
-    id: 'sample-3',
-    content: "Library seats at 6am vs 6pm are two completely different universes. Early bird gets the power socket! 🔌",
-    author: "Anonymous",
-    likes: 412,
-    retweets: 89,
-    comments: 56,
-    time: "5h ago",
-    isVerified: false,
-  },
-  {
-    id: 'sample-4',
-    content: "Shoutout to everyone pretending to study while scrolling through their phones. We see you. We are you. 👀",
-    author: "Campus Life",
-    isVerified: true,
-    likes: 567,
-    retweets: 123,
-    comments: 89,
-    time: "6h ago",
-  },
-  {
-    id: 'sample-5',
-    content: "The WiFi in the hostel is giving dial-up internet vibes today. Who else is struggling? 📶",
-    author: "Anonymous",
-    likes: 298,
-    retweets: 67,
-    comments: 145,
-    time: "8h ago",
-    isVerified: false,
-  },
-];
 
-function ForYouPost({ post, index }: { post: typeof samplePosts[0]; index: number }) {
-  return (
-    <div
-      className="border-b border-gray-200 dark:border-gray-700 p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer opacity-0 animate-slide-up"
-      style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
-    >
-      <div className="flex gap-3">
-        <div className="flex-shrink-0">
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-            <span className="text-white font-bold text-sm">
-              {post.author.charAt(0)}
-            </span>
-          </div>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-gray-900 dark:text-white">{post.author}</span>
-            {post.isVerified && (
-              <CheckCircle className="h-4 w-4 text-blue-500" />
-            )}
-            <span className="text-gray-500 dark:text-gray-400 text-sm">· {post.time}</span>
-          </div>
-          <p className="mt-1 text-gray-800 dark:text-gray-200">{post.content}</p>
-          <div className="mt-3 flex items-center gap-6 text-gray-500 dark:text-gray-400">
-            <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors group">
-              <MessageCircle className="h-4 w-4 group-hover:scale-110 transition-transform" />
-              <span className="text-sm">{post.comments}</span>
-            </button>
-            <button className="flex items-center gap-1.5 hover:text-green-500 transition-colors group">
-              <Repeat2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
-              <span className="text-sm">{post.retweets}</span>
-            </button>
-            <button className="flex items-center gap-1.5 hover:text-pink-500 transition-colors group">
-              <Heart className="h-4 w-4 group-hover:scale-110 transition-transform" />
-              <span className="text-sm">{post.likes}</span>
-            </button>
-            <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors group">
-              <Share className="h-4 w-4 group-hover:scale-110 transition-transform" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default async function HomePage() {
   const [listings, confessions, stats, suggestions, videos] = await Promise.all([
@@ -495,118 +398,172 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-mesh bg-noise">
-        {/* Animated gradient orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="orb-1 -top-20 -left-20" />
-          <div className="orb-2 top-1/4 -right-20" />
-          <div className="orb-3 -bottom-32 left-1/3" />
-          
-          {/* Additional floating blobs */}
-          <div className="absolute top-1/2 left-1/4 h-40 w-40 rounded-full bg-amber-400/20 blur-2xl animate-float" />
-          <div className="absolute bottom-1/4 right-1/4 h-48 w-48 rounded-full bg-cyan-400/15 blur-3xl animate-float-delayed" />
-          
-          {/* Floating decorative shapes */}
-          <div className="absolute top-16 right-[10%] h-4 w-4 rounded-full bg-white/40 animate-float" />
-          <div className="absolute top-32 left-[15%] h-3 w-3 rounded-full bg-pink-300/50 animate-float-delayed" />
-          <div className="absolute bottom-24 right-[20%] h-5 w-5 rounded-full bg-yellow-300/40 animate-float-slow" />
-          <div className="absolute top-[40%] right-[25%] h-2 w-2 rounded-full bg-white/60 animate-sparkle" />
-          <div className="absolute bottom-[30%] left-[30%] h-3 w-3 rounded-full bg-cyan-200/50 animate-sparkle" style={{ animationDelay: "1s" }} />
-          
-          {/* Large rotating circle decoration */}
-          <div className="absolute -bottom-40 -right-40 h-80 w-80 rounded-full border border-white/10 animate-rotate-slow" />
-          <div className="absolute -bottom-32 -right-32 h-64 w-64 rounded-full border border-white/5 animate-rotate-slow" style={{ animationDirection: "reverse" }} />
-          
-          {/* Grid pattern overlay */}
-          <div className="absolute inset-0 pattern-grid opacity-30" />
+      {/* Floating Create Button */}
+      <FloatingCreateButton />
+
+      {/* Hero Section - Premium & Dynamic */}
+      <section className="relative overflow-hidden bg-mesh bg-noise min-h-[90vh] flex flex-col justify-center">
+        {/* Multi-layered animated gradient background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-purple-950/80 to-slate-950" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_80%_at_50%_-30%,rgba(139,92,246,0.4),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_80%_40%,rgba(236,72,153,0.2),transparent)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_20%_80%,rgba(59,130,246,0.2),transparent)]" />
+          <div className="absolute inset-0 bg-[conic-gradient(from_180deg_at_50%_50%,rgba(139,92,246,0.1)_0deg,transparent_60deg,rgba(236,72,153,0.1)_120deg,transparent_180deg,rgba(245,158,11,0.1)_240deg,transparent_300deg,rgba(139,92,246,0.1)_360deg)] animate-rotate-slow" style={{ animationDuration: "60s" }} />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-6xl px-4 py-16 sm:py-24 md:py-32">
-          {/* Trust badges */}
-          <div className="mb-8 flex flex-wrap justify-center gap-3 opacity-0 animate-slide-up" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
-            <span className="inline-flex items-center gap-1.5 rounded-full glass-card px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/15">
-              <Shield className="h-4 w-4 text-emerald-400" />
-              100% Anonymous
+        {/* Enhanced animated grid with perspective */}
+        <div className="absolute inset-0 hero-grid-pattern opacity-[0.15]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
+
+        {/* Premium floating orbs using globals.css classes */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Primary gradient orbs */}
+          <div className="orb-1 -top-20 -left-20 glow-purple" />
+          <div className="orb-2 top-1/4 -right-16 glow-amber" />
+          <div className="orb-3 -bottom-32 left-1/3" />
+          
+          {/* Secondary accent orbs with enhanced blur */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[800px] w-[800px] rounded-full bg-gradient-to-br from-purple-600/20 via-pink-500/10 to-amber-500/5 blur-[150px] animate-morph" />
+          <div className="absolute top-10 right-1/4 h-40 w-40 rounded-full bg-gradient-to-br from-amber-400/30 to-orange-500/20 blur-3xl animate-float glow-amber" />
+          <div className="absolute bottom-32 left-1/4 h-32 w-32 rounded-full bg-gradient-to-br from-cyan-400/30 to-blue-500/20 blur-2xl animate-float-delayed" />
+          <div className="absolute top-1/3 left-10 h-24 w-24 rounded-full bg-gradient-to-br from-pink-400/25 to-purple-500/15 blur-xl animate-float-slow" />
+          
+          {/* Enhanced sparkle particles with varied sizes */}
+          <div className="absolute top-[12%] left-[18%] h-3 w-3 rounded-full bg-white/90 animate-sparkle shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+          <div className="absolute top-[22%] right-[12%] h-2 w-2 rounded-full bg-purple-300 animate-sparkle shadow-[0_0_8px_rgba(168,85,247,0.8)]" style={{ animationDelay: "0.3s" }} />
+          <div className="absolute top-[55%] left-[8%] h-2.5 w-2.5 rounded-full bg-pink-300 animate-sparkle shadow-[0_0_8px_rgba(244,114,182,0.8)]" style={{ animationDelay: "0.7s" }} />
+          <div className="absolute bottom-[22%] right-[22%] h-2 w-2 rounded-full bg-amber-200 animate-sparkle shadow-[0_0_8px_rgba(253,230,138,0.8)]" style={{ animationDelay: "1.2s" }} />
+          <div className="absolute top-[35%] right-[6%] h-3.5 w-3.5 rounded-full bg-white/80 animate-sparkle shadow-[0_0_12px_rgba(255,255,255,0.9)]" style={{ animationDelay: "1.8s" }} />
+          <div className="absolute top-[45%] left-[25%] h-1.5 w-1.5 rounded-full bg-cyan-300 animate-sparkle shadow-[0_0_6px_rgba(103,232,249,0.8)]" style={{ animationDelay: "2.2s" }} />
+          <div className="absolute bottom-[35%] left-[15%] h-2 w-2 rounded-full bg-violet-300 animate-sparkle shadow-[0_0_8px_rgba(196,181,253,0.8)]" style={{ animationDelay: "2.7s" }} />
+          <div className="absolute top-[18%] left-[45%] h-1.5 w-1.5 rounded-full bg-rose-300 animate-sparkle shadow-[0_0_6px_rgba(253,164,175,0.8)]" style={{ animationDelay: "3.1s" }} />
+          
+          {/* Premium rotating rings with gradient borders */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[450px] w-[450px] rounded-full border-2 border-purple-500/20 animate-rotate-slow" style={{ animationDuration: "25s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[550px] w-[550px] rounded-full border border-pink-500/10 animate-rotate-slow" style={{ animationDirection: "reverse", animationDuration: "35s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[650px] w-[650px] rounded-full border border-amber-500/5 animate-rotate-slow" style={{ animationDuration: "45s" }} />
+          
+          {/* Floating geometric shapes */}
+          <div className="absolute top-[20%] right-[20%] w-6 h-6 border-2 border-purple-400/30 rotate-45 animate-float" />
+          <div className="absolute bottom-[30%] left-[12%] w-4 h-4 bg-gradient-to-br from-pink-400/20 to-transparent rotate-12 animate-float-delayed" />
+          <div className="absolute top-[60%] right-[10%] w-5 h-5 border border-amber-400/25 rounded-full animate-float-slow" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-6xl px-4 py-24 sm:py-32 md:py-40">
+          {/* Premium trust badges with enhanced glassmorphism */}
+          <div className="mb-12 flex flex-wrap justify-center gap-3 opacity-0 animate-slide-up" style={{ animationDelay: "0ms", animationFillMode: "forwards" }}>
+            <span className="glass-card rounded-full px-5 py-2.5 text-sm font-medium text-white/90 transition-all duration-300 hover:scale-105 hover:bg-white/15 group cursor-default">
+              <span className="relative z-10 flex items-center gap-2">
+                <span className="relative">
+                  <Shield className="h-4 w-4 text-emerald-400" />
+                  <span className="absolute inset-0 h-4 w-4 animate-ping text-emerald-400/50"><Shield className="h-4 w-4" /></span>
+                </span>
+                <span>100% Anonymous</span>
+              </span>
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full glass-card px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/15">
-              <Lock className="h-4 w-4 text-blue-400" />
-              No Login Required
+            <span className="glass-card rounded-full px-5 py-2.5 text-sm font-medium text-white/90 transition-all duration-300 hover:scale-105 hover:bg-white/15 group cursor-default">
+              <span className="relative z-10 flex items-center gap-2">
+                <Lock className="h-4 w-4 text-blue-400 group-hover:animate-bounce-subtle" />
+                <span>No Login Required</span>
+              </span>
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full glass-card px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/15">
-              <Zap className="h-4 w-4 text-amber-400" />
-              Instant Access
+            <span className="glass-card rounded-full px-5 py-2.5 text-sm font-medium text-white/90 transition-all duration-300 hover:scale-105 hover:bg-white/15 group cursor-default">
+              <span className="relative z-10 flex items-center gap-2">
+                <Zap className="h-4 w-4 text-amber-400 group-hover:animate-pulse" />
+                <span>Instant Access</span>
+              </span>
             </span>
           </div>
 
-          {/* Headline with gradient text */}
+          {/* Premium headline with layered gradient text */}
           <h1 className="text-center opacity-0 animate-slide-up" style={{ animationDelay: "100ms", animationFillMode: "forwards" }}>
-            <span className="block text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl drop-shadow-lg">
+            <span className="block text-5xl font-black tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-[0_0_35px_rgba(255,255,255,0.15)]">
               Your Campus,
             </span>
-            <span className="mt-2 block text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-              <span className="text-gradient-warm animate-text-shimmer bg-[length:200%_200%]">
-                Connected
+            <span className="mt-3 block text-5xl font-black tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+              <span className="relative inline-block">
+                <span className="text-gradient-warm animate-text-shimmer drop-shadow-[0_0_40px_rgba(245,158,11,0.4)]">
+                  Connected
+                </span>
+                <span className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 via-pink-500/20 to-purple-500/20 blur-2xl -z-10 animate-pulse" style={{ animationDuration: "3s" }} />
               </span>
             </span>
           </h1>
 
-          {/* Subheadline */}
-          <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-blue-100 sm:text-xl opacity-0 animate-slide-up" style={{ animationDelay: "200ms", animationFillMode: "forwards" }}>
+          {/* Enhanced subheadline with gradient accent */}
+          <p className="mx-auto mt-10 max-w-2xl text-center text-lg text-slate-300/90 sm:text-xl md:text-2xl opacity-0 animate-slide-up leading-relaxed font-light" style={{ animationDelay: "200ms", animationFillMode: "forwards" }}>
             Buy, sell, confess, and connect with your campus community.
-            <span className="block mt-1 text-blue-200/80">
-              Everything you need, one platform.
+            <span className="block mt-3 text-slate-400/80 text-base sm:text-lg">
+              Everything you need, <span className="text-gradient-warm font-medium">one platform</span>.
             </span>
           </p>
 
-          {/* CTA Buttons */}
-          <div className="mt-10 flex flex-wrap justify-center gap-4 opacity-0 animate-slide-up" style={{ animationDelay: "300ms", animationFillMode: "forwards" }}>
+          {/* Premium CTA Buttons with glow effects */}
+          <div className="mt-14 flex flex-wrap justify-center gap-5 opacity-0 animate-slide-up" style={{ animationDelay: "300ms", animationFillMode: "forwards" }}>
             <Link
               href="/marketplace"
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-8 py-4 text-lg font-semibold text-slate-900 shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105 glow-amber"
+              className="group relative inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 px-8 py-4 text-base font-bold text-slate-900 shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(245,158,11,0.6)] hover:scale-105 hover:-translate-y-0.5"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-amber-300 to-orange-400 opacity-0 transition-opacity group-hover:opacity-100" />
+              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-300 via-yellow-300 to-orange-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <span className="absolute inset-0 rounded-full animate-pulse opacity-30 bg-gradient-to-r from-amber-400 to-orange-500" style={{ animationDuration: "2s" }} />
               <ShoppingBag className="relative z-10 h-5 w-5" />
               <span className="relative z-10">Explore Marketplace</span>
-              <ArrowRight className="relative z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <Link
               href="/confessions/new"
-              className="inline-flex items-center gap-2 rounded-full glass-card px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:bg-white/20 hover:scale-105 glow-purple"
+              className="group relative inline-flex items-center gap-3 rounded-full glass-card px-8 py-4 text-base font-semibold text-white shadow-[0_0_20px_rgba(139,92,246,0.2)] transition-all duration-300 hover:shadow-[0_0_40px_rgba(139,92,246,0.4)] hover:scale-105 hover:-translate-y-0.5 hover:bg-white/15"
             >
-              <MessageSquare className="h-5 w-5" />
-              Share Confession
+              <span className="absolute inset-0 rounded-full border border-purple-400/30 group-hover:border-purple-400/50 transition-colors" />
+              <MessageSquare className="relative z-10 h-5 w-5 text-purple-300 group-hover:text-purple-200" />
+              <span className="relative z-10">Share Confession</span>
             </Link>
           </div>
 
-          {/* Stats counters */}
-          <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4 opacity-0 animate-slide-up" style={{ animationDelay: "400ms", animationFillMode: "forwards" }}>
-            <div className="glass-card rounded-2xl p-4 text-center">
-              <div className="text-3xl font-bold text-white sm:text-4xl animate-count-up">
+          {/* Premium stats with enhanced glass cards */}
+          <div className="mt-24 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 opacity-0 animate-slide-up" style={{ animationDelay: "400ms", animationFillMode: "forwards" }}>
+            <div className="glass-card rounded-2xl p-6 text-center transition-all duration-300 hover:scale-105 hover:bg-white/15 group card-shine">
+              <div className="text-4xl font-black text-white sm:text-5xl transition-all duration-300 group-hover:text-gradient-warm group-hover:drop-shadow-[0_0_20px_rgba(245,158,11,0.5)]">
                 {stats.totalPosts.toLocaleString()}+
               </div>
-              <div className="text-sm text-blue-200 mt-1">Total Posts</div>
+              <div className="text-sm text-purple-300/90 mt-2 font-semibold uppercase tracking-wider">Total Posts</div>
+              <div className="mt-3 h-1 w-12 mx-auto rounded-full bg-gradient-to-r from-purple-500 to-pink-500 group-hover:w-20 transition-all duration-300" />
             </div>
-            <div className="glass-card rounded-2xl p-4 text-center">
-              <div className="text-3xl font-bold text-white sm:text-4xl animate-count-up">
+            <div className="glass-card rounded-2xl p-6 text-center transition-all duration-300 hover:scale-105 hover:bg-white/15 group card-shine">
+              <div className="text-4xl font-black text-white sm:text-5xl transition-all duration-300 group-hover:text-gradient-warm group-hover:drop-shadow-[0_0_20px_rgba(245,158,11,0.5)]">
                 {stats.activeUsers.toLocaleString()}+
               </div>
-              <div className="text-sm text-pink-200 mt-1">Active Users</div>
+              <div className="text-sm text-pink-300/90 mt-2 font-semibold uppercase tracking-wider">Active Users</div>
+              <div className="mt-3 h-1 w-12 mx-auto rounded-full bg-gradient-to-r from-pink-500 to-rose-500 group-hover:w-20 transition-all duration-300" />
             </div>
-            <div className="glass-card rounded-2xl p-4 text-center">
-              <div className="text-3xl font-bold text-white sm:text-4xl animate-count-up">
+            <div className="glass-card rounded-2xl p-6 text-center transition-all duration-300 hover:scale-105 hover:bg-white/15 group card-shine">
+              <div className="text-4xl font-black text-white sm:text-5xl transition-all duration-300 group-hover:text-gradient-warm group-hover:drop-shadow-[0_0_20px_rgba(245,158,11,0.5)]">
                 {stats.itemsListed.toLocaleString()}+
               </div>
-              <div className="text-sm text-emerald-200 mt-1">Items Listed</div>
+              <div className="text-sm text-emerald-300/90 mt-2 font-semibold uppercase tracking-wider">Items Listed</div>
+              <div className="mt-3 h-1 w-12 mx-auto rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 group-hover:w-20 transition-all duration-300" />
             </div>
-            <div className="glass-card rounded-2xl p-4 text-center">
-              <div className="text-3xl font-bold text-white sm:text-4xl animate-count-up">
+            <div className="glass-card rounded-2xl p-6 text-center transition-all duration-300 hover:scale-105 hover:bg-white/15 group card-shine">
+              <div className="text-4xl font-black text-white sm:text-5xl transition-all duration-300 group-hover:text-gradient-warm group-hover:drop-shadow-[0_0_20px_rgba(245,158,11,0.5)]">
                 {stats.messagesSent.toLocaleString()}+
               </div>
-              <div className="text-sm text-amber-200 mt-1">Messages Sent</div>
+              <div className="text-sm text-amber-300/90 mt-2 font-semibold uppercase tracking-wider">Messages Sent</div>
+              <div className="mt-3 h-1 w-12 mx-auto rounded-full bg-gradient-to-r from-amber-500 to-orange-500 group-hover:w-20 transition-all duration-300" />
+            </div>
+          </div>
+          
+          {/* Scroll indicator */}
+          <div className="mt-16 flex justify-center opacity-0 animate-slide-up" style={{ animationDelay: "500ms", animationFillMode: "forwards" }}>
+            <div className="flex flex-col items-center gap-2 text-white/40 animate-bounce" style={{ animationDuration: "2s" }}>
+              <span className="text-xs uppercase tracking-widest">Scroll to explore</span>
+              <ChevronDown className="h-5 w-5" />
             </div>
           </div>
         </div>
+
+        {/* Premium bottom fade with gradient */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-gray-50 via-gray-50/80 to-transparent" />
       </section>
 
       {/* Quick Access Cards */}
@@ -839,19 +796,7 @@ export default async function HomePage() {
       {/* For You Feed - Twitter style */}
       <section className="py-12 bg-white dark:bg-gray-900">
         <div className="mx-auto max-w-2xl px-4">
-          <div className="flex items-center justify-between mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">For You</h2>
-            <div className="flex gap-2">
-              <button className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-full">For You</button>
-              <button className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-full">Following</button>
-            </div>
-          </div>
-          
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
-            {samplePosts.map((post, index) => (
-              <ForYouPost key={post.id} post={post} index={index} />
-            ))}
-          </div>
+          <ForYouFeed />
         </div>
       </section>
 
