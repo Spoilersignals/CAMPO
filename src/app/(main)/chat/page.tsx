@@ -14,6 +14,7 @@ import {
   Loader2,
   Info,
   LogIn,
+  Trash2,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -21,6 +22,7 @@ import {
   getChatMessages,
   getNewMessages,
   getAnonymousChatLimit,
+  deleteChatMessage,
   type CampusChatMessage,
 } from "@/actions/campus-chat";
 
@@ -163,6 +165,22 @@ export default function CampusChatPage() {
     return msg.sessionId === sessionId;
   };
 
+  async function handleDeleteMessage(messageId: string) {
+    if (!confirm("Delete this message?")) return;
+    
+    const result = await deleteChatMessage(
+      messageId,
+      sessionId,
+      session?.user?.id
+    );
+    
+    if (result.success) {
+      setMessages((prev) => prev.filter((m) => m.id !== messageId));
+    } else {
+      setError(result.error || "Failed to delete message");
+    }
+  }
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-900">
       {/* Animated background */}
@@ -293,16 +311,27 @@ export default function CampusChatPage() {
                     {/* Message content */}
                     <p className="text-sm text-white break-words">{msg.content}</p>
 
-                    {/* Timestamp */}
-                    <p
-                      className={`text-[10px] mt-1 ${
-                        isOwn ? "text-white/50" : "text-white/30"
-                      }`}
-                    >
-                      {formatDistanceToNow(new Date(msg.createdAt), {
-                        addSuffix: true,
-                      })}
-                    </p>
+                    {/* Timestamp and Delete */}
+                    <div className="flex items-center justify-between mt-1">
+                      <p
+                        className={`text-[10px] ${
+                          isOwn ? "text-white/50" : "text-white/30"
+                        }`}
+                      >
+                        {formatDistanceToNow(new Date(msg.createdAt), {
+                          addSuffix: true,
+                        })}
+                      </p>
+                      {isOwn && (
+                        <button
+                          onClick={() => handleDeleteMessage(msg.id)}
+                          className="text-white/30 hover:text-red-400 transition-colors ml-2"
+                          title="Delete message"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

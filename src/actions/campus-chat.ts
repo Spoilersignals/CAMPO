@@ -278,3 +278,40 @@ export async function getNewMessages(sinceId: string): Promise<{
     return { success: false, messages: [] };
   }
 }
+
+/**
+ * Delete a chat message (own messages only)
+ */
+export async function deleteChatMessage(
+  messageId: string,
+  sessionId: string,
+  userId?: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const message = await prisma.campusChatMessage.findUnique({
+      where: { id: messageId },
+    });
+
+    if (!message) {
+      return { success: false, error: "Message not found" };
+    }
+
+    // Check ownership - either by userId or sessionId
+    const isOwner = 
+      (userId && message.userId === userId) || 
+      (!userId && message.sessionId === sessionId);
+
+    if (!isOwner) {
+      return { success: false, error: "You can only delete your own messages" };
+    }
+
+    await prisma.campusChatMessage.delete({
+      where: { id: messageId },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting chat message:", error);
+    return { success: false, error: "Failed to delete message" };
+  }
+}
