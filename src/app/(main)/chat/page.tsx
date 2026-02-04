@@ -69,6 +69,9 @@ export default function CampusChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const pollIntervalRef = useRef<NodeJS.Timeout>();
+  
+  // Check if user is admin
+  const isAdmin = (session?.user as { role?: string })?.role === "ADMIN";
 
   // Initialize session ID
   useEffect(() => {
@@ -171,7 +174,8 @@ export default function CampusChatPage() {
     const result = await deleteChatMessage(
       messageId,
       sessionId,
-      session?.user?.id
+      session?.user?.id,
+      isAdmin
     );
     
     if (result.success) {
@@ -322,11 +326,11 @@ export default function CampusChatPage() {
                           addSuffix: true,
                         })}
                       </p>
-                      {isOwn && (
+                      {(isOwn || isAdmin) && (
                         <button
                           onClick={() => handleDeleteMessage(msg.id)}
-                          className="text-white/30 hover:text-red-400 transition-colors ml-2"
-                          title="Delete message"
+                          className={`hover:text-red-400 transition-colors ml-2 ${isAdmin && !isOwn ? 'text-red-300/50' : 'text-white/30'}`}
+                          title={isAdmin && !isOwn ? "Delete as admin" : "Delete message"}
                         >
                           <Trash2 className="h-3 w-3" />
                         </button>

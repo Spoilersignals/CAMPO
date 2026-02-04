@@ -280,12 +280,13 @@ export async function getNewMessages(sinceId: string): Promise<{
 }
 
 /**
- * Delete a chat message (own messages only)
+ * Delete a chat message (own messages or admin)
  */
 export async function deleteChatMessage(
   messageId: string,
   sessionId: string,
-  userId?: string
+  userId?: string,
+  isAdmin?: boolean
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const message = await prisma.campusChatMessage.findUnique({
@@ -296,12 +297,12 @@ export async function deleteChatMessage(
       return { success: false, error: "Message not found" };
     }
 
-    // Check ownership - either by userId or sessionId
+    // Check ownership - either by userId, sessionId, or admin
     const isOwner = 
       (userId && message.userId === userId) || 
       (!userId && message.sessionId === sessionId);
 
-    if (!isOwner) {
+    if (!isOwner && !isAdmin) {
       return { success: false, error: "You can only delete your own messages" };
     }
 

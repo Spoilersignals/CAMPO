@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/footer";
 import { SocialMenu } from "@/components/layout/social-menu";
 import { BroadcastBanner } from "@/components/broadcast-banner";
 import { SafetyBanner } from "@/components/caution-alert";
+import { FloatingCreateButton } from "@/components/floating-create-button";
 import { auth } from "@/lib/auth";
 
 export default async function MainLayout({
@@ -19,6 +20,7 @@ export default async function MainLayout({
       <Header />
       <SocialMenu user={session?.user} />
       <main className="flex-1 pb-20 md:pb-0 md:ml-64">{children}</main>
+      <FloatingCreateButton />
       <Footer />
     </div>
   );
